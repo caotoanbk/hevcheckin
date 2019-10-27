@@ -42,11 +42,13 @@ import DashboardComponent from './components/DashboardComponent.vue';
 import CardComponent from './components/CardComponent.vue';
 import UserComponent from './components/UserComponent.vue';
 import EmployeeComponent from './components/EmployeeComponent.vue';
+import HistoryComponent from './components/HistoryComponent.vue';
 // import DeveloperComponent from './components/DeveloperComponent.vue';
 
 let routes = [
   { path: '/dashboard', component: DashboardComponent },
   { path: '/user', component: UserComponent },
+  { path: '/history', component: HistoryComponent },
   { path: '/card', component: CardComponent, props: (route) => ({ type: route.query.type }) },
   { path: '/employee', component: EmployeeComponent, props: (route) => ({ type: route.query.type }) }
 ]

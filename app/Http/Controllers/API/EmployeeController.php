@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Employee;
 use App\Card;
+use App\History;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -68,6 +69,11 @@ class EmployeeController extends Controller
             if($card){                
                 $card->EmployeeIdentity = $newEmployee->EmployeeIdentity;
                 $card->save();
+
+                History::create([
+                    'CardName' => $request['EmployeeCardname'],
+                    'EmployeeIdentity' => $request['EmployeeIdentity']
+                ]);
             }
         }
 
@@ -98,7 +104,7 @@ class EmployeeController extends Controller
 
         $this->validate($request,[
             'EmployeeName' => 'required|string|max:191',
-            'EmployeeIdentity' => 'required|string|max:191|unique:employees,EmployeeIdentity,'.$employee->id,
+            'EmployeeIdentity' => 'sometimes|string|max:191|unique:employees,EmployeeIdentity,'.$employee->id,
             'EmployeeType' => 'required',
             'EmployeePhoto' => 'required'
         ]);
@@ -129,7 +135,13 @@ class EmployeeController extends Controller
             if($newCard){
                 $newCard->EmployeeIdentity = $employee->EmployeeIdentity;
                 $newCard->save();
+
+                History::create([
+                    'CardName' => $request['EmployeeCardname'],
+                    'EmployeeIdentity' => $request['EmployeeIdentity']
+                ]);
             }
+
         }
 
         $employee->update($request->all());

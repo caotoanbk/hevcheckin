@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResources(['user' => 'API\UserController', 'card' => 'API\CardController', 'employee' => 'API\EmployeeController']);
+Route::apiResources(['user' => 'API\UserController', 'card' => 'API\CardController', 'employee' => 'API\EmployeeController', 'history' => 'API\HistoryController']);
 
 Route::get('findUser', 'API\UserController@search');
 

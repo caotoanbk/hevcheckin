@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Card;
 use App\Employee;
 use Illuminate\Support\Facades\Hash;
+use App\History;
 
 class CardController extends Controller
 {
@@ -46,6 +47,11 @@ class CardController extends Controller
             if($employee){                
                 $employee->EmployeeCardname = $request['CardName'];
                 $employee->save();
+
+                History::create([
+                    'CardName' => $request['CardName'],
+                    'EmployeeIdentity' => $request['EmployeeIdentity']
+                ]);
             }
         }
 
@@ -93,7 +99,12 @@ class CardController extends Controller
             if($newEmpl){
                 $newEmpl->EmployeeCardname = $card->CardName;
                 $newEmpl->save();
+                History::create([
+                    'CardName' => $request['CardName'],
+                    'EmployeeIdentity' => $request['EmployeeIdentity']
+                ]);
             }
+
         }
 
         $card->update($request->all());

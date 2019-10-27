@@ -67,8 +67,8 @@
 
       <form @submit.prevent = "editmode ? updateCard() : createCard()">
       <div class="modal-body">
-        <div class="form-group" v-show="!editmode">
-          <input v-model="form.CardName" type="text" name="name"
+        <div class="form-group">
+          <input v-model="form.CardName" type="text" :readonly = "editmode ? true : false" name="name"
             class="form-control" placeholder="Card Name" :class="{ 'is-invalid': form.errors.has('CardName') }">
           <has-error :form="form" field="CardName"></has-error>
         </div>

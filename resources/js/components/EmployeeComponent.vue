@@ -10,7 +10,7 @@
 
 
                 <div class="card-tools">
-                    <button class="btn btn-success btn-sm" @click="newModal">Add New <i class="fas fa-user-plus fa-fw"></i></button>
+                    <button class="btn btn-success btn-sm" @click="newModal">Add New Employee</button>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -85,7 +85,7 @@
         </div>
          <div class="form-group">
           <input v-model="form.EmployeeIdentity" type="text"
-            class="form-control" placeholder="CMND/ID" :class="{ 'is-invalid': form.errors.has('EmployeeIdentity') }">
+            class="form-control" :readonly="editmode ? true : false" placeholder="CMND/ID" :class="{ 'is-invalid': form.errors.has('EmployeeIdentity') }">
           <has-error :form="form" field="EmployeeIdentity"></has-error>
         </div>
        <div class="form-group">

@@ -24,6 +24,8 @@ Route::get('findUser', 'API\UserController@search');
 
 Route::get('findCard', 'API\CardController@search');
 
+Route::get('findEmployee', 'API\EmployeeController@search');
+
 Route::get('getEmployeeOptions', 'API\CardController@getEmployeeOptions');
 
 Route::get('getEmployeeOptionsEdit/{id}', 'API\CardController@getEmployeeOptionsEdit');

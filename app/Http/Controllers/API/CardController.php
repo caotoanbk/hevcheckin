@@ -19,11 +19,11 @@ class CardController extends Controller
     {
         $type = $request->get('type');
         if($type == 'allocated'){
-            return Card::whereNotNull('employee_id')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
+            return Card::whereNotNull('EmployeeIdentity')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
         }
 
         if($type == 'avaiable'){
-            return Card::whereNull('employee_id')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
+            return Card::whereNull('EmployeeIdentity')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
         }
 
         return Card::orderBy('created_at', 'desc')->with('employee')->paginate(15);
@@ -41,8 +41,8 @@ class CardController extends Controller
             'CardName' => 'required|string|max:191|unique:cards',
         ]);
 
-        if($request['employee_id']){
-            $employee = Employee::findOrFail($request['employee_id']);
+        if($request['EmployeeIdentity']){
+            $employee = Employee::where('EmployeeIdentity', $request['EmployeeIdentity'])->first();
             if($employee){                
                 $employee->EmployeeCardname = $request['CardName'];
                 $employee->save();
@@ -51,7 +51,7 @@ class CardController extends Controller
 
         return Card::create([
             'CardName' => $request['CardName'],
-            'employee_id' => $request['employee_id']
+            'EmployeeIdentity' => $request['EmployeeIdentity']
         ]);
     }
 
@@ -81,15 +81,15 @@ class CardController extends Controller
         //     'CardName' => 'required|string|max:191|unique:cards,CardName,'.$card->id,
         // ]);
 
-        if($card && ($card->employee_id != $request->employee_id)){
+        if($card && ($card->EmployeeIdentity != $request->EmployeeIdentity)){
 
-            $oldEmpl = Employee::find($card->employee_id);
+            $oldEmpl = Employee::where('EmployeeIdentity', $card->EmployeeIdentity)->first();
             if($oldEmpl){
                $oldEmpl->EmployeeCardname = null;
                $oldEmpl->save();
             }
 
-            $newEmpl = Employee::find($request['employee_id']);
+            $newEmpl = Employee::where('EmployeeIdentity', $request['EmployeeIdentity'])->first();
             if($newEmpl){
                 $newEmpl->EmployeeCardname = $card->CardName;
                 $newEmpl->save();
@@ -110,8 +110,8 @@ class CardController extends Controller
     {
         $card = Card::findOrFail($id);
 
-        if($card->employee_id){
-            $employee = Employee::findOrFail($card->employee_id);
+        if($card->EmployeeIdentity){
+            $employee = Employee::findOrFail($card->EmployeeIdentity);
             $employee->EmployeeCardname = null;
             $employee->save();
         }
@@ -127,17 +127,17 @@ class CardController extends Controller
         $type = \Request::get('type') ? \Request::get('type') : '';
 
         if($type == 'allocated'){
-            $cards = Card::whereNotNull('employee_id');
+            $cards = Card::whereNotNull('EmployeeIdentity');
         } else if($type == 'avaiable'){
-            $cards = Card::whereNull('employee_id');
+            $cards = Card::whereNull('EmployeeIdentity');
         } else{
-            $cards = Card::where(true);
+            $cards = Card::select();
         }
 
         if ($search = \Request::get('q')) {
             $cards = $cards->where(function($query) use ($search){
                 $query->where('CardName', 'LIKE', "%$search%");
-                $query->where('CardName', 'LIKE', "%$search%");
+                // $query->where('CardName', 'LIKE', "%$search%");
             });
         }else{
             $cards = $cards->orderBy('created_at', 'desc');
@@ -155,8 +155,8 @@ class CardController extends Controller
 
         $employees = Employee::where('EmployeeCardName', null);
 
-        if($card->employee_id){
-            $employees = $employees->orWhere('id', $card->employee_id);
+        if($card->EmployeeIdentity){
+            $employees = $employees->orWhere('EmployeeIdentity', $card->EmployeeIdentity);
         }
 
         return $employees->orderBy('created_at', 'desc')->get();

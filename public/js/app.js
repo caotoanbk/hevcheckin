@@ -1962,7 +1962,7 @@ __webpack_require__.r(__webpack_exports__);
       form: new Form({
         id: '',
         CardName: '',
-        employee_id: ''
+        EmployeeIdentity: ''
       }),
       employee_options: {}
     };
@@ -2304,7 +2304,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['type'],
   data: function data() {
     return {
       editmode: false,
@@ -2322,15 +2325,22 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    getCardOptions: function getCardOptions() {
+    getCardOptionsEdit: function getCardOptionsEdit(id) {
       var _this = this;
 
-      axios.get('api/getCardOptions').then(function (response) {
+      axios.get('api/getCardOptionsEdit/' + id).then(function (response) {
         _this.card_options = response.data;
       });
     },
-    changePicture: function changePicture(e) {
+    getCardOptions: function getCardOptions() {
       var _this2 = this;
+
+      axios.get('api/getCardOptions').then(function (response) {
+        _this2.card_options = response.data;
+      });
+    },
+    changePicture: function changePicture(e) {
+      var _this3 = this;
 
       var file = e.target.files[0];
       var reader = new FileReader();
@@ -2342,7 +2352,7 @@ __webpack_require__.r(__webpack_exports__);
 
         reader.onloadend = function (file) {
           // console.log('Result', reader)
-          _this2.form.EmployeePhoto = reader.result;
+          _this3.form.EmployeePhoto = reader.result;
         };
 
         $('#blah').removeClass('d-none');
@@ -2352,15 +2362,15 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getResults: function getResults() {
-      var _this3 = this;
+      var _this4 = this;
 
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      axios.get('api/employee?page=' + page).then(function (response) {
-        _this3.employees = response.data;
+      axios.get('api/employee?type=' + this.type + '&page=' + page).then(function (response) {
+        _this4.employees = response.data;
       });
     },
     updateEmployee: function updateEmployee() {
-      var _this4 = this;
+      var _this5 = this;
 
       this.$Progress.start();
       this.form.put('api/employee/' + this.form.id).then(function () {
@@ -2368,16 +2378,17 @@ __webpack_require__.r(__webpack_exports__);
         $('#addNewModal').modal('hide');
         swal.fire('Updated!', 'Information has been updated.', 'success');
 
-        _this4.$Progress.finish();
+        _this5.$Progress.finish();
 
         Fire.$emit('AfterCreate');
       })["catch"](function () {
-        _this4.$Progress.fail();
+        _this5.$Progress.fail();
       });
     },
     editModal: function editModal(employee) {
       this.editmode = true;
       this.form.reset();
+      this.getCardOptionsEdit(employee.id);
       $('input[type=file]').val('');
       $('#blah').addClass('d-none');
       $('#addNewModal').modal('show');
@@ -2388,13 +2399,14 @@ __webpack_require__.r(__webpack_exports__);
     newModal: function newModal() {
       this.editmode = false;
       this.form.reset();
+      this.form.EmployeeType = 'Công nhân thời vụ';
       this.getCardOptions();
       $('input[type=file]').val('');
       $('#blah').addClass('d-none');
       $('#addNewModal').modal('show');
     },
     deleteEmployee: function deleteEmployee(id) {
-      var _this5 = this;
+      var _this6 = this;
 
       swal.fire({
         title: 'Are you sure?',
@@ -2406,7 +2418,7 @@ __webpack_require__.r(__webpack_exports__);
         confirmButtonText: 'Yes, delete it!'
       }).then(function (result) {
         if (result.value) {
-          _this5.form["delete"]('api/employee/' + id).then(function () {
+          _this6.form["delete"]('api/employee/' + id).then(function () {
             swal.fire('Deleted!', 'Your file has been deleted.', 'success');
             Fire.$emit('AfterCreate');
           })["catch"](function () {
@@ -2416,15 +2428,15 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     loadEmployees: function loadEmployees() {
-      var _this6 = this;
+      var _this7 = this;
 
-      axios.get("api/employee").then(function (_ref) {
+      axios.get("api/employee?type=" + this.type).then(function (_ref) {
         var data = _ref.data;
-        return _this6.employees = data;
+        return _this7.employees = data;
       });
     },
     createEmployee: function createEmployee() {
-      var _this7 = this;
+      var _this8 = this;
 
       this.$Progress.start();
       this.form.post('api/employee').then(function () {
@@ -2435,23 +2447,28 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Employee Created successfully'
         });
 
-        _this7.$Progress.finish();
+        _this8.$Progress.finish();
       })["catch"](function () {});
     }
   },
   created: function created() {
-    var _this8 = this;
+    var _this9 = this;
 
     Fire.$on('searching', function () {
-      var query = _this8.$parent.search;
-      axios.get('api/findEmployee?q=' + query).then(function (data) {
-        _this8.employees = data.data;
+      var query = _this9.$parent.search;
+      axios.get('api/findEmployee?type=' + _this9.type + '&q=' + query).then(function (data) {
+        _this9.employees = data.data;
       })["catch"](function () {});
     });
     this.loadEmployees();
     Fire.$on('AfterCreate', function () {
-      _this8.loadEmployees();
+      _this9.loadEmployees();
     }); // setInterval(() => this.loadUsers(), 3000);
+  },
+  watch: {
+    type: function type(newVal, oldVal) {
+      this.loadEmployees();
+    }
   }
 });
 
@@ -60199,7 +60216,7 @@ var render = function() {
             _vm.type == "avaiable"
               ? _c("h3", { staticClass: "card-title" }, [
                   _vm._v("Avaiable Card "),
-                  _c("span", { staticClass: "badge badge-info p-2" }, [
+                  _c("span", { staticClass: "badge badge-success p-2" }, [
                     _vm._v(_vm._s(_vm.cards.total))
                   ])
                 ])
@@ -60211,8 +60228,8 @@ var render = function() {
                   ])
                 ])
               : _c("h3", { staticClass: "card-title" }, [
-                  _vm._v("Card "),
-                  _c("span", { staticClass: "badge badge-info p-2" }, [
+                  _vm._v("All Card "),
+                  _c("span", { staticClass: "badge badge-primary p-2" }, [
                     _vm._v(_vm._s(_vm.cards.total))
                   ])
                 ]),
@@ -60220,7 +60237,10 @@ var render = function() {
             _c("div", { staticClass: "card-tools" }, [
               _c(
                 "button",
-                { staticClass: "btn btn-success", on: { click: _vm.newModal } },
+                {
+                  staticClass: "btn btn-success btn-sm",
+                  on: { click: _vm.newModal }
+                },
                 [_vm._v("Add New Card")]
               )
             ])
@@ -60432,15 +60452,20 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.form.employee_id,
-                                expression: "form.employee_id"
+                                value: _vm.form.EmployeeIdentity,
+                                expression: "form.EmployeeIdentity"
                               }
                             ],
                             staticClass: "form-control",
                             class: {
-                              "is-invalid": _vm.form.errors.has("employee_id")
+                              "is-invalid": _vm.form.errors.has(
+                                "EmployeeIdentity"
+                              )
                             },
-                            attrs: { name: "employee_id", id: "employee_id" },
+                            attrs: {
+                              name: "EmployeeIdentity",
+                              id: "EmployeeIdentity"
+                            },
                             on: {
                               change: function($event) {
                                 var $$selectedVal = Array.prototype.filter
@@ -60453,7 +60478,7 @@ var render = function() {
                                   })
                                 _vm.$set(
                                   _vm.form,
-                                  "employee_id",
+                                  "EmployeeIdentity",
                                   $event.target.multiple
                                     ? $$selectedVal
                                     : $$selectedVal[0]
@@ -60469,7 +60494,7 @@ var render = function() {
                             _vm._l(_vm.employee_options, function(op) {
                               return _c(
                                 "option",
-                                { domProps: { value: op.id } },
+                                { domProps: { value: op.EmployeeIdentity } },
                                 [_vm._v(_vm._s(op.EmployeeName))]
                               )
                             })
@@ -60478,7 +60503,7 @@ var render = function() {
                         ),
                         _vm._v(" "),
                         _c("has-error", {
-                          attrs: { form: _vm.form, field: "employee_id" }
+                          attrs: { form: _vm.form, field: "EmployeeIdentity" }
                         })
                       ],
                       1
@@ -60696,12 +60721,34 @@ var render = function() {
       _c("div", { staticClass: "col-md-12" }, [
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-header" }, [
-            _c("h3", { staticClass: "card-title" }, [_vm._v("User")]),
+            _vm.type == "allocated"
+              ? _c("h3", { staticClass: "card-title" }, [
+                  _vm._v("Allocated Employee "),
+                  _c("span", { staticClass: "badge badge-success p-2" }, [
+                    _vm._v(_vm._s(_vm.employees.total))
+                  ])
+                ])
+              : _vm.type == "avaiable"
+              ? _c("h3", { staticClass: "card-title" }, [
+                  _vm._v("Unallocated Employee "),
+                  _c("span", { staticClass: "badge badge-warning p-2" }, [
+                    _vm._v(_vm._s(_vm.employees.total))
+                  ])
+                ])
+              : _c("h3", { staticClass: "card-title" }, [
+                  _vm._v("All Employee "),
+                  _c("span", { staticClass: "badge badge-primary p-2" }, [
+                    _vm._v(_vm._s(_vm.employees.total))
+                  ])
+                ]),
             _vm._v(" "),
             _c("div", { staticClass: "card-tools" }, [
               _c(
                 "button",
-                { staticClass: "btn btn-success", on: { click: _vm.newModal } },
+                {
+                  staticClass: "btn btn-success btn-sm",
+                  on: { click: _vm.newModal }
+                },
                 [
                   _vm._v("Add New "),
                   _c("i", { staticClass: "fas fa-user-plus fa-fw" })
@@ -60737,7 +60784,7 @@ var render = function() {
                     _c("td", [
                       _c("img", {
                         staticClass: "img",
-                        staticStyle: { "max-width": "100px" },
+                        staticStyle: { "max-height": "60px" },
                         attrs: { src: "/img/profile/" + employee.EmployeePhoto }
                       })
                     ]),
@@ -61030,20 +61077,16 @@ var render = function() {
                             }
                           },
                           [
-                            _c("option", { attrs: { value: "" } }, [
-                              _vm._v("Chọn loại công nhân")
-                            ]),
+                            _c(
+                              "option",
+                              { attrs: { value: "Công nhân thời vụ" } },
+                              [_vm._v("Công nhân thời vụ")]
+                            ),
                             _vm._v(" "),
                             _c(
                               "option",
                               { attrs: { value: "Công nhân chính thức" } },
                               [_vm._v("Công nhân chính thức")]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "option",
-                              { attrs: { value: "Công nhân thời vụ" } },
-                              [_vm._v("Công nhân thời vụ")]
                             )
                           ]
                         ),
@@ -77289,8 +77332,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\Projects\startlaravel\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\Projects\startlaravel\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\projects\hevcheckin\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\projects\hevcheckin\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

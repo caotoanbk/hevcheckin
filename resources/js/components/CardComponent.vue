@@ -4,12 +4,12 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title" v-if="type == 'avaiable'">Avaiable Card <span class="badge badge-info p-2">{{cards.total}}</span></h3>
+                <h3 class="card-title" v-if="type == 'avaiable'">Avaiable Card <span class="badge badge-success p-2">{{cards.total}}</span></h3>
                 <h3 class="card-title" v-else-if="type =='allocated'">Allocated Card <span class="badge badge-warning p-2">{{cards.total}}</span></h3>
-                <h3 class="card-title" v-else>Card <span class="badge badge-info p-2">{{cards.total}}</span></h3>
+                <h3 class="card-title" v-else>All Card <span class="badge badge-primary p-2">{{cards.total}}</span></h3>
 
                 <div class="card-tools">
-                    <button class="btn btn-success" @click="newModal">Add New Card</button>
+                    <button class="btn btn-success btn-sm" @click="newModal">Add New Card</button>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -74,11 +74,11 @@
         </div>
 
         <div class="form-group">
-            <select name="employee_id" v-model="form.employee_id" id="employee_id" class="form-control" :class="{'is-invalid': form.errors.has('employee_id') }">
+            <select name="EmployeeIdentity" v-model="form.EmployeeIdentity" id="EmployeeIdentity" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeIdentity') }">
                 <option value="">Select Employee</option>
-                <option v-for="op in employee_options" :value="op.id">{{op.EmployeeName}}</option>
+                <option v-for="op in employee_options" :value="op.EmployeeIdentity">{{op.EmployeeName}}</option>
             </select>
-            <has-error :form="form" field="employee_id"></has-error>
+            <has-error :form="form" field="EmployeeIdentity"></has-error>
         </div>
 
       </div>
@@ -106,7 +106,7 @@
                 form: new Form({
                     id:'',
                     CardName: '',
-                    employee_id: ''
+                    EmployeeIdentity: ''
                 }),
                 employee_options: {},
             }

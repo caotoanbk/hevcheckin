@@ -68,9 +68,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <li class="nav-item">
             <router-link to="/dashboard" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt blue"></i>
+              <i class="nav-icon fas fa-home blue"></i>
               <p>
-                Dashboard
+                Home
               </p>
             </router-link>
           </li>
@@ -107,16 +107,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <router-link to="/employee" class="nav-link">
-                  <p class="pl-4">Allocated Card Users</p>
+                <router-link to="/employee?type=allocated" class="nav-link">
+                  <p class="pl-4">Allocated Employee</p>
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link to="/card" class="nav-link">
-                  <p class="pl-4">Unallocated Card User</p>
+                <router-link to="/employee?type=avaiable" class="nav-link">
+                  <p class="pl-4">Unallocated Employee</p>
                 </router-link>
               </li>
             </ul>
+          </li>
+
+          <li class="nav-item">
+            <router-link to="/dashboard" class="nav-link">
+              <i class="nav-icon fas fa-history purple"></i>
+              <p>
+                History
+              </p>
+            </router-link>
           </li>
 
         <li class="nav-item">

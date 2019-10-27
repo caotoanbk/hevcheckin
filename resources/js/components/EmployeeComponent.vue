@@ -4,10 +4,13 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">User</h3>
+                <h3 class="card-title" v-if="type == 'allocated'">Allocated Employee <span class="badge badge-success p-2">{{employees.total}}</span></h3>
+                <h3 class="card-title" v-else-if="type == 'avaiable'">Unallocated Employee <span class="badge badge-warning p-2">{{employees.total}}</span></h3>
+                <h3 class="card-title" v-else>All Employee <span class="badge badge-primary p-2">{{employees.total}}</span></h3>
+
 
                 <div class="card-tools">
-                    <button class="btn btn-success" @click="newModal">Add New <i class="fas fa-user-plus fa-fw"></i></button>
+                    <button class="btn btn-success btn-sm" @click="newModal">Add New <i class="fas fa-user-plus fa-fw"></i></button>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -35,7 +38,7 @@
                       <td>{{employee.EmployeeType}}</td>
                       <td>{{employee.EmployeeCardname}}</td>
                       <td>{{employee.created_at | myDate}}</td>
-                      <td><img class="img" v-bind:src="'/img/profile/' + employee.EmployeePhoto" style="max-width: 100px;"></td>
+                      <td><img class="img" v-bind:src="'/img/profile/' + employee.EmployeePhoto" style="max-height: 60px;"></td>
                       <td>
                           <a href="#" @click="editModal(employee)">
                               <i class="fa fa-edit blue"></i>
@@ -92,9 +95,8 @@
         </div>
         <div class="form-group">
             <select name="EmployeeType" v-model="form.EmployeeType" id="type" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeType') }">
-                <option value="">Chọn loại công nhân</option>
-                <option value="Công nhân chính thức">Công nhân chính thức</option>
                 <option value="Công nhân thời vụ">Công nhân thời vụ</option>
+                <option value="Công nhân chính thức">Công nhân chính thức</option>
             </select>
             <has-error :form="form" field="EmployeeType"></has-error>
         </div>
@@ -132,6 +134,7 @@
 
 <script>
     export default {
+        props: ['type'],
         data() {
             return {
                 editmode: false,
@@ -149,6 +152,12 @@
             }
         },
         methods: {
+            getCardOptionsEdit(id){
+                axios.get('api/getCardOptionsEdit/'+id)
+                    .then( (response) => {
+                        this.card_options = response.data;
+                    })
+            },
             getCardOptions(){
                 axios.get('api/getCardOptions')
                     .then( (response) => {
@@ -179,7 +188,7 @@
                 }
             },
             getResults(page = 1) {
-              axios.get('api/employee?page=' + page)
+              axios.get('api/employee?type='+this.type+'&page=' + page)
                   .then(response => {
                       this.employees = response.data;
                   });
@@ -205,6 +214,7 @@
             editModal(employee){
                 this.editmode = true;
                 this.form.reset();
+                this.getCardOptionsEdit(employee.id);
                 $('input[type=file]').val('');
                 $('#blah').addClass('d-none');
                 $('#addNewModal').modal('show');
@@ -215,6 +225,7 @@
             newModal() {
                 this.editmode = false;
                 this.form.reset();
+                this.form.EmployeeType = 'Công nhân thời vụ';
                 this.getCardOptions();
                 $('input[type=file]').val('');
                 $('#blah').addClass('d-none');
@@ -247,7 +258,7 @@
                 })
             },
             loadEmployees() {
-                axios.get("api/employee").then(({data}) => (this.employees = data));
+                axios.get("api/employee?type="+this.type).then(({data}) => (this.employees = data));
             },
             createEmployee(){
                 this.$Progress.start();
@@ -269,7 +280,7 @@
         created() {
             Fire.$on('searching', () => {
                 let query = this.$parent.search;
-                axios.get('api/findEmployee?q=' + query)
+                axios.get('api/findEmployee?type='+this.type+'&q=' + query)
                 .then((data) => {
                     this.employees = data.data
                 })
@@ -282,6 +293,11 @@
                 this.loadEmployees();
             });
             // setInterval(() => this.loadUsers(), 3000);
+        },
+        watch: {
+            type: function(newVal, oldVal){
+                this.loadEmployees();
+            }
         }
     }
 </script>

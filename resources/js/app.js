@@ -43,6 +43,7 @@ import CardComponent from './components/CardComponent.vue';
 import UserComponent from './components/UserComponent.vue';
 import EmployeeComponent from './components/EmployeeComponent.vue';
 import HistoryComponent from './components/HistoryComponent.vue';
+import SupplierComponent from './components/SupplierComponent.vue';
 // import DeveloperComponent from './components/DeveloperComponent.vue';
 
 let routes = [
@@ -50,7 +51,8 @@ let routes = [
   { path: '/user', component: UserComponent },
   { path: '/history', component: HistoryComponent },
   { path: '/card', component: CardComponent, props: (route) => ({ type: route.query.type }) },
-  { path: '/employee', component: EmployeeComponent, props: (route) => ({ type: route.query.type }) }
+  { path: '/employee', component: EmployeeComponent, props: (route) => ({ type: route.query.type }) },
+  { path: '/supplier', component: SupplierComponent}
 ]
 
 const router = new VueRouter({
@@ -89,11 +91,17 @@ const app = new Vue({
     el: '#app',
     router,
     data: {
-        search: ''
+        search: '',
+        currentUser: {}
     },
     methods:{
         searchit: _.debounce(() => {
             Fire.$emit('searching');
         }, 800)
-    }
+    },
+    created() {
+        axios.get('current-user').then ((response) => {
+            this.currentUser = response.data;
+        });
+    },
 });

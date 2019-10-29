@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Employee;
 use App\Card;
 use App\History;
+use App\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,6 +17,7 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index(Request $request)
     {
         // return Employee::orderBy('created_at', 'desc')->paginate(15);
@@ -23,14 +25,14 @@ class EmployeeController extends Controller
         $type = $request->get('type');
 
         if($type == 'allocated'){
-            return Employee::whereNotNull('EmployeeCardname')->orderBy('created_at', 'desc')->paginate(15);
+            return Employee::whereNotNull('EmployeeCardname')->with('supplier')->orderBy('created_at', 'desc')->paginate(15);
         }
 
         if($type == 'avaiable'){
-            return Employee::whereNull('EmployeeCardname')->orderBy('created_at', 'desc')->paginate(15);
+            return Employee::whereNull('EmployeeCardname')->with('supplier')->orderBy('created_at', 'desc')->paginate(15);
         }
 
-        return Employee::orderBy('created_at', 'desc')->paginate(15);
+        return Employee::orderBy('created_at', 'desc')->with('supplier')->paginate(15);
     }
 
     /**
@@ -44,6 +46,7 @@ class EmployeeController extends Controller
         $this->validate($request,[
             'EmployeeName' => 'required|string|max:191',
             'EmployeeIdentity' => 'required|string|max:191|unique:employees',
+            'user_id' => 'required',
             // 'EmployeeCardname' => 'sometimes|string|min:6|unique:employees',
             'EmployeePhoto' => 'required'
         ]);
@@ -57,7 +60,7 @@ class EmployeeController extends Controller
 
         $newEmployee = Employee::create([
             'EmployeeName' => $request['EmployeeName'],
-            'EmployeeInfo' => $request['EmployeeInfo'],
+            'user_id' => $request['user_id'],
             'EmployeeType' => $request['EmployeeType'],
             'EmployeeIdentity' => $request['EmployeeIdentity'],
             'EmployeeCardname' => $request['EmployeeCardname'],
@@ -179,8 +182,24 @@ class EmployeeController extends Controller
         return ['message' => 'Employee Deleted'];
     }
 
-    public function getCardOptions(){
-        return Card::whereNull('EmployeeIdentity')->orderBy('created_at', 'desc')->get();
+    public function getCardOptions(Request $request){
+
+        $supplierId = $request->get('supplierId');
+
+        $cards = Card::select();
+
+        if($supplierId != 'undefined' && $supplierId != 'null'){
+            $supplier = Supplier::find($supplierId);
+            if($supplier){
+                $cardRange = $supplier->SupplierCardRange;
+
+                $minCard = explode(',', $cardRange)[0];
+                $maxCard = explode(',', $cardRange)[1];
+
+                $cards = $cards->where('CardName', '>=', $minCard)->where('CardName', '<=', $maxCard);
+            }
+        }
+        return $cards->whereNull('EmployeeIdentity')->orderBy('created_at', 'desc')->get();
     }
 
 
@@ -212,11 +231,15 @@ class EmployeeController extends Controller
             $employees = $employees->where(function($query) use ($search){
                 $query->where('EmployeeName', 'LIKE', "%$search%");
                 $query->orWhere('EmployeeIdentity', 'LIKE', "%$search%");
-                $query->orWhere('EmployeeInfo', 'LIKE', "%$search%");
             });
         }else{
             $employees = $employees->orderBy('created_at', 'desc');
         }
         return $employees->with('card')->paginate(15);
+    }
+
+    public function getSuppliers()
+    {
+        return \App\Supplier::orderBy('created_at', 'desc')->get();
     }
 }

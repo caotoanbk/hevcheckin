@@ -1,7 +1,22 @@
 <template>
     <div class="container">
-        <div class="row pt-5">
-          <div class="col-lg-3 col-6 offset-3">
+        <div class="row pt-5 d-flex justify-content-center" >
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{totalSuppliers}}</h3>
+
+                <p>Suppliers</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <a href="/card" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-6">
             <!-- small box -->
             <div class="small-box bg-info">
               <div class="inner">
@@ -15,6 +30,7 @@
               <a href="/card" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
           </div>
+
           <!-- ./col -->
           <div class="col-lg-3 col-6">
             <!-- small box -->
@@ -41,6 +57,7 @@
             return {
                 totalCards: '',
                 totalEmployees: '',
+                totalSuppliers: ''
             }
         },
         mounted() {
@@ -49,6 +66,7 @@
         created(){
             axios.get("api/card").then(({data}) => (this.totalCards = data.total));
             axios.get("api/employee").then(({data}) => (this.totalEmployees = data.total));
+            axios.get("api/supplier").then(({data}) => (this.totalSuppliers = data.total));
         }
     }
 </script>

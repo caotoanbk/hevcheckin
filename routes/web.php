@@ -12,11 +12,17 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('home');
+});
+
+Route::middleware('auth')->get('/current-user', function (Request $request) {
+
+   return \App\User::with('supplier')->find(auth()->id());
+
 });
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/dashboard', 'HomeController@index')->name('home');
 
 Route::get('{path}', 'HomeController@index')->where('path', '([-A-z\d\/_.]+)?' );

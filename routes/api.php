@@ -13,12 +13,18 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+// Route::middleware('auth')->get('/user', function (Request $request) {
 
-    return $request->user();
-});
+//     return $request->user();
+// });
 
-Route::apiResources(['user' => 'API\UserController', 'card' => 'API\CardController', 'employee' => 'API\EmployeeController', 'history' => 'API\HistoryController']);
+Route::apiResources([
+    // 'user' => 'API\UserController', 
+    'card' => 'API\CardController', 
+    'employee' => 'API\EmployeeController', 
+    'history' => 'API\HistoryController',
+    'supplier' => 'API\SupplierController'
+]);
 
 Route::get('findUser', 'API\UserController@search');
 
@@ -33,3 +39,5 @@ Route::get('getEmployeeOptionsEdit/{id}', 'API\CardController@getEmployeeOptions
 Route::get('getCardOptions', 'API\EmployeeController@getCardOptions');
 
 Route::get('getCardOptionsEdit/{id}', 'API\EmployeeController@getCardOptionsEdit');
+
+// Route::get('get-supplier', 'API\EmployeeController@getSuppliers');

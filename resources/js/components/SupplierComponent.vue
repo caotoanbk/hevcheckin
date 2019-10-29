@@ -1,15 +1,13 @@
 <template>
-    <div class="container">
-    <div class="row mt-5">
+    <div class="container-fluid">
+<div class="row mt-5">
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title" v-if="type == 'avaiable'">Avaiable Card <span class="badge badge-success p-2">{{cards.total}}</span></h3>
-                <h3 class="card-title" v-else-if="type =='allocated'">Allocated Card <span class="badge badge-warning p-2">{{cards.total}}</span></h3>
-                <h3 class="card-title" v-else>All Card <span class="badge badge-primary p-2">{{cards.total}}</span></h3>
+                <h3 class="card-title">Suppliers</h3>
 
                 <div class="card-tools">
-                    <button class="btn btn-success btn-sm" @click="newModal" v-show="this.$parent.currentUser.supplier_id === null">Add New Card</button>
+                    <button class="btn btn-success btn-sm" @click="newModal">Add New <i class="fas fa-user-plus fa-fw"></i></button>
                 </div>
               </div>
               <!-- /.card-header -->
@@ -17,23 +15,27 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th>Card Name</th>
-                      <th>Employee</th>
+                      <th>ID</th>
+                      <th>Supplier Name</th>
+                      <th>Supplier Info</th>
+                      <th>Card Range</th>
                       <th>Registered At</th>
                       <th>Modify</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="card in cards.data" :key="card.id">
-                      <td>{{card.CardName}}</td>
-                      <td>{{card.employee ? card.employee.EmployeeName : ''}}</td>
-                      <td>{{card.created_at | myDate}}</td>
+                    <tr v-for="supplier in suppliers.data" :key="supplier.id">
+                      <td>{{supplier.id}}</td>
+                      <td>{{supplier.SupplierName}}</td>
+                      <td>{{supplier.SupplierInfo}}</td>
+                      <td>{{supplier.SupplierCardRange}}</td>
+                      <td>{{supplier.created_at | myDate}}</td>
                       <td>
-                          <a href="#" @click="editModal(card)">
+                          <a href="#" @click="editModal(supplier)">
                               <i class="fa fa-edit blue"></i>
                           </a>
                           /
-                          <a href="#" @click="deleteCard(card.id)">
+                          <a href="#" @click="deleteSupplier(supplier.id)">
                               <i class="fa fa-trash red"></i>
                           </a>
 
@@ -44,7 +46,7 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                <pagination :data="cards"
+                <pagination :data="suppliers"
                 @pagination-change-page="getResults"></pagination>
               </div>
             </div>
@@ -58,27 +60,29 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" v-show="!editmode" id="addNewModalLabel">Add New Card</h5>
-        <h5 class="modal-title" v-show="editmode">Update Card's Usage</h5>
+        <h5 class="modal-title" v-show="!editmode" id="addNewModalLabel">Add New Supplier</h5>
+        <h5 class="modal-title" v-show="editmode">Update Supplier's Info</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
-      <form @submit.prevent = "editmode ? updateCard() : createCard()">
+      <form @submit.prevent = "editmode ? updateSupplier() : createSupplier()">
       <div class="modal-body">
         <div class="form-group">
-          <input v-model="form.CardName" type="text" :readonly = "editmode ? true : false" name="name"
-            class="form-control" placeholder="Card Name" :class="{ 'is-invalid': form.errors.has('CardName') }">
-          <has-error :form="form" field="CardName"></has-error>
+          <input v-model="form.SupplierName" type="text" name="SupplierName"
+            class="form-control" placeholder="Name" :class="{ 'is-invalid': form.errors.has('SupplierName') }">
+          <has-error :form="form" field="SupplierName"></has-error>
         </div>
-
+       <div class="form-group">
+          <textarea v-model="form.SupplierInfo" name="SupplierInfo"
+            class="form-control" placeholder="Supplier Info (Optional)" :class="{ 'is-invalid': form.errors.has('SupplierInfo') }"></textarea>
+          <has-error :form="form" field="SupplierInfo"></has-error>
+        </div>
         <div class="form-group">
-            <select name="EmployeeIdentity" v-model="form.EmployeeIdentity" id="EmployeeIdentity" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeIdentity') }">
-                <option value="">Select Employee</option>
-                <option v-for="op in employee_options" :value="op.EmployeeIdentity">{{op.EmployeeName}}</option>
-            </select>
-            <has-error :form="form" field="EmployeeIdentity"></has-error>
+          <input v-model="form.SupplierCardRange" type="text" name="SupplierCardRange"
+            class="form-control" placeholder="Card range separate by comma. Eg: HL001,HL100" :class="{ 'is-invalid': form.errors.has('SupplierCardRange') }">
+          <has-error :form="form" field="SupplierCardRange"></has-error>
         </div>
 
       </div>
@@ -98,43 +102,28 @@
 
 <script>
     export default {
-        props: ['type'],
         data() {
             return {
                 editmode: false,
-                cards: {},
+                suppliers: {},
                 form: new Form({
                     id:'',
-                    CardName: '',
-                    EmployeeIdentity: ''
+                    SupplierName: '',
+                    SupplierInfo: '',
+                    SupplierCardRange: ''
                 }),
-                employee_options: {},
             }
         },
         methods: {
-            getEmployeeOptions(){
-                axios.get('api/getEmployeeOptions')
-                    .then( (response) => {
-                        this.employee_options = response.data;
-                        console.log(response.data);
-                    })
-            },
-            getEmployeeOptionsEdit(id){
-                axios.get('api/getEmployeeOptionsEdit/'+id)
-                    .then( (response) => {
-                        this.employee_options = response.data;
-                        console.log(response.data);
-                    })
-            },
             getResults(page = 1) {
-                axios.get('api/card?type='+this.type+'&page=' + page)
-                    .then(response => {
-                        this.cards = response.data;
-                    });
+              axios.get('api/supplier?page=' + page)
+                  .then(response => {
+                      this.suppliers = response.data;
+                  });
             },
-            updateCard() {
+            updateSupplier() {
                 this.$Progress.start();
-                this.form.put('api/card/'+this.form.id)
+                this.form.put('api/supplier/'+this.form.id)
                 .then(() => {
                     //success
                     $('#addNewModal').modal('hide');
@@ -150,20 +139,18 @@
                     this.$Progress.fail();
                 });
             },
-            editModal(card){
+            editModal(supplier){
                 this.editmode = true;
                 this.form.reset();
-                this.getEmployeeOptionsEdit(card.id);
                 $('#addNewModal').modal('show');
-                this.form.fill(card);
+                this.form.fill(supplier);
             },
             newModal() {
                 this.editmode = false;
                 this.form.reset();
-                this.getEmployeeOptions();
                 $('#addNewModal').modal('show');
             },
-            deleteCard(id) {
+            deleteSupplier(id) {
                 swal.fire({
                   title: 'Are you sure?',
                   text: "You won't be able to revert this!",
@@ -176,7 +163,7 @@
 
                     if(result.value){
 
-                      this.form.delete('api/card/'+id).then( () => {            
+                      this.form.delete('api/supplier/'+id).then( () => {            
                             swal.fire(
                               'Deleted!',
                               'Your file has been deleted.',
@@ -189,19 +176,18 @@
                     }
                 })
             },
-            loadCards() {
-                this.$parent.search = '';
-                axios.get("api/card?supplierId="+this.$parent.currentUser.supplier_id+"&type="+this.type).then(({data}) => (this.cards = data));
+            loadSuppliers() {
+                axios.get("api/supplier").then(({data}) => (this.suppliers = data));
             },
-            createCard(){
+            createSupplier(){
                 this.$Progress.start();
-                this.form.post('api/card')
+                this.form.post('api/supplier')
                     .then(() => {
                         Fire.$emit('AfterCreate');
                         $('#addNewModal').modal('hide');
                         toast.fire({
                           type: 'success',
-                          title: 'Card Created successfully'
+                          title: 'Supplier Created successfully'
                         });
                         this.$Progress.finish();
                     })
@@ -213,23 +199,19 @@
         created() {
             Fire.$on('searching', () => {
                 let query = this.$parent.search;
-                axios.get('api/findCard?type='+this.type+'&q=' + query)
+                axios.get('api/findSupplier?q=' + query)
                 .then((data) => {
-                    this.cards = data.data
+                    this.suppliers = data.data
                 })
                 .catch(() => {
 
                 })
             })
-            this.loadCards();
+            this.loadSuppliers();
             Fire.$on('AfterCreate', () => {
-                this.loadCards();
+                this.loadSuppliers();
             });
-        },
-        watch: {
-            type: function(newVal, oldVal){
-                this.loadCards();
-            }
+            // setInterval(() => this.loadUsers(), 3000);
         }
     }
 </script>

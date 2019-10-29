@@ -21,7 +21,6 @@
                       <th>ID</th>
                       <th>Employee Name</th>
                       <th>Employee Identity</th>
-                      <th>Employee Info</th>
                       <th>Employee Type</th>
                       <th>Employee Cardname</th>
                       <th>Registered At</th>
@@ -34,7 +33,6 @@
                       <td>{{employee.id}}</td>
                       <td>{{employee.EmployeeName}}</td>
                       <td>{{employee.EmployeeIdentity}}</td>
-                      <td>{{employee.EmployeeInfo}}</td>
                       <td>{{employee.EmployeeType}}</td>
                       <td>{{employee.EmployeeCardname}}</td>
                       <td>{{employee.created_at | myDate}}</td>
@@ -88,11 +86,6 @@
             class="form-control" :readonly="editmode ? true : false" placeholder="CMND/ID" :class="{ 'is-invalid': form.errors.has('EmployeeIdentity') }">
           <has-error :form="form" field="EmployeeIdentity"></has-error>
         </div>
-       <div class="form-group">
-          <input v-model="form.EmployeeInfo" type="text"
-            class="form-control" placeholder="Info" :class="{ 'is-invalid': form.errors.has('EmployeeInfo') }">
-          <has-error :form="form" field="EmployeeInfo"></has-error>
-        </div>
         <div class="form-group">
             <select name="EmployeeType" v-model="form.EmployeeType" id="type" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeType') }">
                 <option value="Công nhân thời vụ">Công nhân thời vụ</option>
@@ -109,10 +102,10 @@
             <has-error :form="form" field="EmployeeCardname"></has-error>
         </div>
 
-
         <div class="form-group">
             <label for="photo">Picture:</label>
             <input type="file" @change="changePicture" accept=".gif,.jpg,.jpeg,.png" id="imgInp">
+            <has-error :form="form" field="EmployeePhoto"></has-error>
         </div>
         <div class="pt-2">
             <img class="d-none" id="blah" src="#" alt="your image" style="max-height: 150px;" />
@@ -142,13 +135,13 @@
                 form: new Form({
                     id:'',
                     EmployeeName: '',
-                    EmployeeInfo: '',
                     EmployeeType: '',
                     EmployeeIdentity: '',
                     EmployeeCardname: '',
-                    EmployeePhoto: ''
+                    EmployeePhoto: '',
+                    user_id: this.$parent.currentUser.id
                 }),
-                card_options: {}
+                card_options: {},
             }
         },
         methods: {
@@ -159,7 +152,7 @@
                     })
             },
             getCardOptions(){
-                axios.get('api/getCardOptions')
+                axios.get('api/getCardOptions?supplierId='+this.$parent.currentUser.supplier_id)
                     .then( (response) => {
                         this.card_options = response.data;
                     })

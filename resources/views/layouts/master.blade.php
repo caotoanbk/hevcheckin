@@ -66,11 +66,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
-        <li class="nav-item">
+        <li class="nav-item" v-show="currentUser.supplier_id === null">
             <router-link to="/dashboard" class="nav-link">
               <i class="nav-icon fas fa-home blue"></i>
               <p>
                 Home
+              </p>
+            </router-link>
+          </li>
+
+          <li class="nav-item" v-show="currentUser.supplier_id === null">
+            <router-link to="/supplier" class="nav-link">
+              <i class="nav-icon fas fa-star yellow"></i>
+              <p>
+                Supplier
               </p>
             </router-link>
           </li>
@@ -99,7 +108,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-users yellow"></i>
+              <i class="nav-icon fas fa-users orange"></i>
               <p>
                 Employee Management
                 <i class="right fas fa-angle-left"></i>
@@ -173,7 +182,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- Main Footer -->
   <footer class="main-footer">
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2019 <a href="#">HEV</a>.</strong> All rights reserved.
   </footer>
 </div>
 <!-- ./wrapper -->

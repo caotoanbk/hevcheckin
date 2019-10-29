@@ -17,7 +17,12 @@ class CreateEmployeesTable extends Migration
             $table->increments('id');
             $table->string('EmployeeName');
             $table->string('EmployeeIdentity',50)->unique();
-            $table->string('EmployeeInfo', 255)->nullable();
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->unsigned();
+                  ->references('id')
+                  ->on('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->string('EmployeePhoto')->default('employee.png');
             $table->string('EmployeeType', 50)->default('Temporary Worker');
             $table->string('EmployeeCardname', 50)->nullable();

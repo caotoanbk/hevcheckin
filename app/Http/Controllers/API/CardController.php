@@ -8,6 +8,7 @@ use App\Card;
 use App\Employee;
 use Illuminate\Support\Facades\Hash;
 use App\History;
+use App\Supplier;
 
 class CardController extends Controller
 {
@@ -19,15 +20,30 @@ class CardController extends Controller
     public function index(Request $request)
     {
         $type = $request->get('type');
+        $supplierId = $request->get('supplierId');
+
+        $cards = Card::select();
+
+        if($supplierId != 'undefined' && $supplierId != 'null'){
+            $supplier = Supplier::find($supplierId);
+            if($supplier){
+                $cardRange = $supplier->SupplierCardRange;
+
+                $minCard = explode(',', $cardRange)[0];
+                $maxCard = explode(',', $cardRange)[1];
+
+                $cards = $cards->where('CardName', '>=', $minCard)->where('CardName', '<=', $maxCard);
+            }
+        }
         if($type == 'allocated'){
-            return Card::whereNotNull('EmployeeIdentity')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
+            return $cards->whereNotNull('EmployeeIdentity')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
         }
 
         if($type == 'avaiable'){
-            return Card::whereNull('EmployeeIdentity')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
+            return $cards->whereNull('EmployeeIdentity')->orderBy('created_at', 'desc')->with('employee')->paginate(15);
         }
 
-        return Card::orderBy('created_at', 'desc')->with('employee')->paginate(15);
+        return $cards->orderBy('created_at', 'desc')->with('employee')->paginate(15);
     }
 
     /**

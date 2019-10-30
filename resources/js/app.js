@@ -97,7 +97,7 @@ const app = new Vue({
     methods:{
         searchit: _.debounce(() => {
             Fire.$emit('searching');
-        }, 800)
+        }, 600)
     },
     created() {
         axios.get('current-user').then ((response) => {

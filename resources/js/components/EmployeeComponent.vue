@@ -152,7 +152,7 @@
                     })
             },
             getCardOptions(){
-                axios.get('api/getCardOptions?supplierId='+this.$parent.currentUser.supplier_id)
+                axios.get('api/getCardOptions')
                     .then( (response) => {
                         this.card_options = response.data;
                     })

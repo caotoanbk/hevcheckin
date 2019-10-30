@@ -11,8 +11,4 @@ class Employee extends Model
     public function card(){
         return $this->hasOne(\App\Card::class, 'EmployeeIdentity', 'EmployeeIdentity');
     }
-
-    public function supplier(){
-        return $this->hasOne(\App\Supplier::class, 'id', 'supplier_id');
-    }
 }

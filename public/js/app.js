@@ -2047,7 +2047,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this6 = this;
 
       this.$parent.search = '';
-      axios.get("api/card?supplierId=" + this.$parent.currentUser.supplier_id + "&type=" + this.type).then(function (_ref) {
+      axios.get("api/card?type=" + this.type).then(function (_ref) {
         var data = _ref.data;
         return _this6.cards = data;
       });
@@ -2349,7 +2349,7 @@ __webpack_require__.r(__webpack_exports__);
     getCardOptions: function getCardOptions() {
       var _this2 = this;
 
-      axios.get('api/getCardOptions?supplierId=' + this.$parent.currentUser.supplier_id).then(function (response) {
+      axios.get('api/getCardOptions').then(function (response) {
         _this2.card_options = response.data;
       });
     },
@@ -2497,6 +2497,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
 //
 //
 //
@@ -61666,7 +61668,9 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(history.EmployeeIdentity))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(history.employee_name))]),
+                    _c("td", [_vm._v(_vm._s(history.EmployeeName))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(history.SupplierName))]),
                     _vm._v(" "),
                     _c("td", [
                       _vm._v(_vm._s(_vm._f("myDate")(history.created_at)))
@@ -61714,6 +61718,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Employee Identity")]),
         _vm._v(" "),
         _c("th", [_vm._v("Employee Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Supplier Name")]),
         _vm._v(" "),
         _c("th", [_vm._v("Registered At")])
       ])
@@ -77833,7 +77839,7 @@ var app = new Vue({
   methods: {
     searchit: _.debounce(function () {
       Fire.$emit('searching');
-    }, 800)
+    }, 600)
   },
   created: function created() {
     var _this = this;

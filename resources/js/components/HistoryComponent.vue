@@ -14,6 +14,7 @@
                       <th>Card Name</th>
                       <th>Employee Identity</th>
                       <th>Employee Name</th>
+                      <th>Supplier Name</th>
                       <th>Registered At</th>
                     </tr>
                   </thead>
@@ -21,7 +22,8 @@
                     <tr v-for="history in histories.data" :key="history.id">
                       <td>{{history.CardName}}</td>
                       <td>{{history.EmployeeIdentity}}</td>
-                      <td>{{history.employee_name}}</td>
+                      <td>{{history.EmployeeName}}</td>
+                      <td>{{history.SupplierName}}</td>
                       <td>{{history.created_at | myDate}}</td>
                     </tr>
                   </tbody>

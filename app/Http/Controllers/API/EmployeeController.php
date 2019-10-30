@@ -24,15 +24,21 @@ class EmployeeController extends Controller
 
         $type = $request->get('type');
 
+        if(auth()->user()->supplier_id){
+            $employees = Employee::where('user_id', auth()->id());
+        } else {
+            $employees = Employee::select();
+        }
+
         if($type == 'allocated'){
-            return Employee::whereNotNull('EmployeeCardname')->with('supplier')->orderBy('created_at', 'desc')->paginate(15);
+            return $employees->whereNotNull('EmployeeCardname')->orderBy('created_at', 'desc')->paginate(15);
         }
 
         if($type == 'avaiable'){
-            return Employee::whereNull('EmployeeCardname')->with('supplier')->orderBy('created_at', 'desc')->paginate(15);
+            return $employees->whereNull('EmployeeCardname')->orderBy('created_at', 'desc')->paginate(15);
         }
 
-        return Employee::orderBy('created_at', 'desc')->with('supplier')->paginate(15);
+        return $employees->orderBy('created_at', 'desc')->paginate(15);
     }
 
     /**
@@ -43,6 +49,12 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        if(auth()->user()->supplier_id){
+            $supplierName = Supplier::find(auth()->user()->supplier_id)->SupplierName;
+        } else {
+            $supplierName = '';
+        }
+
         $this->validate($request,[
             'EmployeeName' => 'required|string|max:191',
             'EmployeeIdentity' => 'required|string|max:191|unique:employees',
@@ -71,12 +83,14 @@ class EmployeeController extends Controller
             $card = Card::where('CardName', $request['EmployeeCardname'])->first();
             if($card){                
                 $card->EmployeeIdentity = $newEmployee->EmployeeIdentity;
-                $card->save();
 
                 History::create([
                     'CardName' => $request['EmployeeCardname'],
-                    'EmployeeIdentity' => $request['EmployeeIdentity']
+                    'EmployeeIdentity' => $request['EmployeeIdentity'],
+                    'EmployeeName' => $request['EmployeeName'],
+                    'SupplierName' => $supplierName
                 ]);
+                $card->save();
             }
         }
 
@@ -103,6 +117,13 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        if(auth()->user()->supplier_id){
+            $supplierName = Supplier::find(auth()->user()->supplier_id)->SupplierName;
+        } else {
+            $supplierName = '';
+        }
+
         $employee = Employee::find($id);
 
         $this->validate($request,[
@@ -141,7 +162,9 @@ class EmployeeController extends Controller
 
                 History::create([
                     'CardName' => $request['EmployeeCardname'],
-                    'EmployeeIdentity' => $request['EmployeeIdentity']
+                    'EmployeeIdentity' => $request['EmployeeIdentity'],
+                    'EmployeeName' => $employee->EmployeeName,
+                    'SupplierName' => $supplierName
                 ]);
             }
 
@@ -184,11 +207,11 @@ class EmployeeController extends Controller
 
     public function getCardOptions(Request $request){
 
-        $supplierId = $request->get('supplierId');
-
         $cards = Card::select();
 
-        if($supplierId != 'undefined' && $supplierId != 'null'){
+        $supplierId = auth()->user()->supplier_id;
+
+        if($supplierId){
             $supplier = Supplier::find($supplierId);
             if($supplier){
                 $cardRange = $supplier->SupplierCardRange;
@@ -208,6 +231,20 @@ class EmployeeController extends Controller
         $employee = Employee::findOrFail($id);
 
         $cards = Card::where('EmployeeIdentity', null);
+
+        $supplierId = auth()->user()->supplier_id;
+
+        if($supplierId){
+            $supplier = Supplier::find($supplierId);
+            if($supplier){
+                $cardRange = $supplier->SupplierCardRange;
+
+                $minCard = explode(',', $cardRange)[0];
+                $maxCard = explode(',', $cardRange)[1];
+
+                $cards = $cards->where('CardName', '>=', $minCard)->where('CardName', '<=', $maxCard);
+            }
+        }
 
         if($employee->EmployeeCardname){
             $cards = $cards->orWhere('CardName', $employee->EmployeeCardname);

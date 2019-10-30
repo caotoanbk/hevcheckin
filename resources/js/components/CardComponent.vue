@@ -191,7 +191,7 @@
             },
             loadCards() {
                 this.$parent.search = '';
-                axios.get("api/card?supplierId="+this.$parent.currentUser.supplier_id+"&type="+this.type).then(({data}) => (this.cards = data));
+                axios.get("api/card?type="+this.type).then(({data}) => (this.cards = data));
             },
             createCard(){
                 this.$Progress.start();

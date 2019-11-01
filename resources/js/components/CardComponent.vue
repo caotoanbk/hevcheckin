@@ -1,7 +1,8 @@
 <template>
 <div class="container">
-    <div class="row mt-5">
+    <div class="row mt-2">
       <div class="col-md-12">
+        <input type="text" v-model="card_query" class="form-control mb-2" placeholder="search card..." @keyup="findCard()">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title" v-if="type == 'avaiable'">Avaiable Card <span class="badge badge-success p-2">{{cards.total}}</span></h3>
@@ -76,7 +77,7 @@
             <div class="form-group">
                 <select name="employee_id" v-model="form.employee_id" id="employee_id" class="form-control" :class="{'is-invalid': form.errors.has('employee_id') }">
                     <option value="">Select Employee</option>
-                    <option v-for="op in employee_options" :value="op.employee_id">{{op.EmployeeName}}</option>
+                    <option v-for="op in employee_options" :value="op.id">{{op.EmployeeName}}</option>
                 </select>
                 <has-error :form="form" field="employee_id"></has-error>
             </div>
@@ -107,6 +108,7 @@
                     CardName: '',
                     employee_id: ''
                 }),
+                card_query: '',
                 employee_options: {},
             }
         },
@@ -188,6 +190,15 @@
                     }
                 })
             },
+            findCard() {
+                axios.get('api/findCard?type='+this.type+'&q=' + this.card_query)
+                    .then((data) => {
+                        this.cards = data.data
+                    })
+                    .catch(() => {
+
+                    })
+            },
             loadCards() {
                 this.$parent.search = '';
                 axios.get("api/card?type="+this.type).then(({data}) => (this.cards = data));
@@ -210,16 +221,16 @@
             }
         },
         created() {
-            Fire.$on('searching', () => {
-                let query = this.$parent.search;
-                axios.get('api/findCard?type='+this.type+'&q=' + query)
-                .then((data) => {
-                    this.cards = data.data
-                })
-                .catch(() => {
+            // Fire.$on('searching', () => {
+            //     let query = this.$parent.search;
+            //     axios.get('api/findCard?type='+this.type+'&q=' + query)
+            //     .then((data) => {
+            //         this.cards = data.data
+            //     })
+            //     .catch(() => {
 
-                })
-            })
+            //     })
+            // })
             this.loadCards();
             Fire.$on('AfterCreate', () => {
                 this.loadCards();

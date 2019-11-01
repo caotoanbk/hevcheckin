@@ -62,4 +62,15 @@ class HistoryController extends Controller
     {
         //
     }
+
+    public function search() {
+        if ($search = \Request::get('q')) {
+            $histories = History::where(function($query) use ($search){
+                $query->where('EmployeeName', 'LIKE', "%$search%")->orWhere('CardName', 'LIKE', "%$search%")->orWhere('SupplierName', 'LIKE', "%$search%");
+            })->paginate(10);
+        }else{
+            $histories = History::orderBy('created_at', 'desc')->paginate(10);
+        }
+        return $histories;
+    }
 }

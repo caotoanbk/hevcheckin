@@ -15,7 +15,7 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        return Supplier::orderBy('created_at', 'desc')->paginate(15);
+        return Supplier::orderBy('SupplierName', 'asc')->paginate(10);
     }
 
     /**
@@ -85,5 +85,16 @@ class SupplierController extends Controller
         $supplier->delete();
 
         return ['message' => 'Supplier Deleted'];
+    }
+
+    public function search() {
+        if ($search = \Request::get('q')) {
+            $suppliers = Supplier::where(function($query) use ($search){
+                $query->where('SupplierName', 'LIKE', "%$search%");
+            })->paginate(10);
+        }else{
+            $suppliers = Supplier::orderBy('SupplierName', 'asc')->paginate(10);
+        }
+        return $suppliers;
     }
 }

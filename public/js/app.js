@@ -1953,6 +1953,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['type'],
   data: function data() {
@@ -1963,6 +1964,7 @@ __webpack_require__.r(__webpack_exports__);
         CardName: '',
         employee_id: ''
       }),
+      card_query: '',
       employee_options: {}
     };
   },
@@ -2042,17 +2044,24 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    loadCards: function loadCards() {
+    findCard: function findCard() {
       var _this6 = this;
+
+      axios.get('api/findCard?type=' + this.type + '&q=' + this.card_query).then(function (data) {
+        _this6.cards = data.data;
+      })["catch"](function () {});
+    },
+    loadCards: function loadCards() {
+      var _this7 = this;
 
       this.$parent.search = '';
       axios.get("api/card?type=" + this.type).then(function (_ref) {
         var data = _ref.data;
-        return _this6.cards = data;
+        return _this7.cards = data;
       });
     },
     createCard: function createCard() {
-      var _this7 = this;
+      var _this8 = this;
 
       this.$Progress.start();
       this.form.post('api/card').then(function () {
@@ -2063,22 +2072,25 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Card Created successfully'
         });
 
-        _this7.$Progress.finish();
+        _this8.$Progress.finish();
       })["catch"](function () {});
     }
   },
   created: function created() {
-    var _this8 = this;
+    var _this9 = this;
 
-    Fire.$on('searching', function () {
-      var query = _this8.$parent.search;
-      axios.get('api/findCard?type=' + _this8.type + '&q=' + query).then(function (data) {
-        _this8.cards = data.data;
-      })["catch"](function () {});
-    });
+    // Fire.$on('searching', () => {
+    //     let query = this.$parent.search;
+    //     axios.get('api/findCard?type='+this.type+'&q=' + query)
+    //     .then((data) => {
+    //         this.cards = data.data
+    //     })
+    //     .catch(() => {
+    //     })
+    // })
     this.loadCards();
     Fire.$on('AfterCreate', function () {
-      _this8.loadCards();
+      _this9.loadCards();
     });
   },
   watch: {
@@ -2310,6 +2322,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['type'],
   data: function data() {
@@ -2324,6 +2337,7 @@ __webpack_require__.r(__webpack_exports__);
         EmployeePhoto: '',
         user_id: this.$parent.currentUser.id
       }),
+      employee_query: '',
       card_options: {}
     };
   },
@@ -2430,16 +2444,23 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    loadEmployees: function loadEmployees() {
+    findEmployee: function findEmployee() {
       var _this7 = this;
+
+      axios.get('api/findEmployee?type=' + this.type + '&q=' + this.employee_query).then(function (data) {
+        _this7.employees = data.data;
+      })["catch"](function () {});
+    },
+    loadEmployees: function loadEmployees() {
+      var _this8 = this;
 
       axios.get("api/employee?type=" + this.type).then(function (_ref) {
         var data = _ref.data;
-        return _this7.employees = data;
+        return _this8.employees = data;
       });
     },
     createEmployee: function createEmployee() {
-      var _this8 = this;
+      var _this9 = this;
 
       this.$Progress.start();
       this.form.post('api/employee').then(function () {
@@ -2450,22 +2471,25 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Employee Created successfully'
         });
 
-        _this8.$Progress.finish();
+        _this9.$Progress.finish();
       })["catch"](function () {});
     }
   },
   created: function created() {
-    var _this9 = this;
+    var _this10 = this;
 
-    Fire.$on('searching', function () {
-      var query = _this9.$parent.search;
-      axios.get('api/findEmployee?type=' + _this9.type + '&q=' + query).then(function (data) {
-        _this9.employees = data.data;
-      })["catch"](function () {});
-    });
+    // Fire.$on('searching', () => {
+    //     let query = this.$parent.search;
+    //     axios.get('api/findEmployee?type='+this.type+'&q=' + query)
+    //     .then((data) => {
+    //         this.employees = data.data
+    //     })
+    //     .catch(() => {
+    //     })
+    // })
     this.loadEmployees();
     Fire.$on('AfterCreate', function () {
-      _this9.loadEmployees();
+      _this10.loadEmployees();
     }); // setInterval(() => this.loadUsers(), 3000);
   },
   watch: {
@@ -2529,10 +2553,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      histories: {}
+      histories: {},
+      history_query: ''
     };
   },
   methods: {
@@ -2544,27 +2570,37 @@ __webpack_require__.r(__webpack_exports__);
         _this.histories = response.data;
       });
     },
-    loadHistories: function loadHistories() {
+    findHistory: function findHistory() {
       var _this2 = this;
+
+      axios.get('api/findHistory?q=' + this.history_query).then(function (data) {
+        _this2.histories = data.data;
+      })["catch"](function () {});
+    },
+    loadHistories: function loadHistories() {
+      var _this3 = this;
 
       axios.get("api/history").then(function (_ref) {
         var data = _ref.data;
-        return _this2.histories = data;
+        return _this3.histories = data;
       });
     }
   },
   created: function created() {
-    var _this3 = this;
+    var _this4 = this;
 
-    Fire.$on('searching', function () {
-      var query = _this3.$parent.search;
-      axios.get('api/findHistory?q=' + query).then(function (data) {
-        _this3.users = data.data;
-      })["catch"](function () {});
-    });
+    // Fire.$on('searching', () => {
+    //     let query = this.$parent.search;
+    //     axios.get('api/findHistory?q=' + query)
+    //     .then((data) => {
+    //         this.users = data.data
+    //     })
+    //     .catch(() => {
+    //     })
+    // })
     this.loadHistories();
     Fire.$on('AfterCreate', function () {
-      _this3.loadHistories();
+      _this4.loadHistories();
     }); // setInterval(() => this.loadUsers(), 3000);
   }
 });
@@ -2680,6 +2716,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2690,7 +2727,8 @@ __webpack_require__.r(__webpack_exports__);
         SupplierName: '',
         SupplierInfo: '',
         SupplierCardRange: ''
-      })
+      }),
+      supplier_query: ''
     };
   },
   methods: {
@@ -2751,16 +2789,23 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    loadSuppliers: function loadSuppliers() {
+    findSupplier: function findSupplier() {
       var _this4 = this;
+
+      axios.get('api/findSupplier?q=' + this.supplier_query).then(function (data) {
+        _this4.suppliers = data.data;
+      })["catch"](function () {});
+    },
+    loadSuppliers: function loadSuppliers() {
+      var _this5 = this;
 
       axios.get("api/supplier").then(function (_ref) {
         var data = _ref.data;
-        return _this4.suppliers = data;
+        return _this5.suppliers = data;
       });
     },
     createSupplier: function createSupplier() {
-      var _this5 = this;
+      var _this6 = this;
 
       this.$Progress.start();
       this.form.post('api/supplier').then(function () {
@@ -2771,22 +2816,25 @@ __webpack_require__.r(__webpack_exports__);
           title: 'Supplier Created successfully'
         });
 
-        _this5.$Progress.finish();
+        _this6.$Progress.finish();
       })["catch"](function () {});
     }
   },
   created: function created() {
-    var _this6 = this;
+    var _this7 = this;
 
-    Fire.$on('searching', function () {
-      var query = _this6.$parent.search;
-      axios.get('api/findSupplier?q=' + query).then(function (data) {
-        _this6.suppliers = data.data;
-      })["catch"](function () {});
-    });
+    // Fire.$on('searching', () => {
+    //     let query = this.$parent.search;
+    //     axios.get('api/findSupplier?q=' + query)
+    //     .then((data) => {
+    //         this.suppliers = data.data
+    //     })
+    //     .catch(() => {
+    //     })
+    // })
     this.loadSuppliers();
     Fire.$on('AfterCreate', function () {
-      _this6.loadSuppliers();
+      _this7.loadSuppliers();
     }); // setInterval(() => this.loadUsers(), 3000);
   }
 });
@@ -60528,8 +60576,33 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row mt-5" }, [
+    _c("div", { staticClass: "row mt-2" }, [
       _c("div", { staticClass: "col-md-12" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.card_query,
+              expression: "card_query"
+            }
+          ],
+          staticClass: "form-control mb-2",
+          attrs: { type: "text", placeholder: "search card..." },
+          domProps: { value: _vm.card_query },
+          on: {
+            keyup: function($event) {
+              return _vm.findCard()
+            },
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.card_query = $event.target.value
+            }
+          }
+        }),
+        _vm._v(" "),
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-header" }, [
             _vm.type == "avaiable"
@@ -60804,7 +60877,7 @@ var render = function() {
                             _vm._l(_vm.employee_options, function(op) {
                               return _c(
                                 "option",
-                                { domProps: { value: op.employee_id } },
+                                { domProps: { value: op.id } },
                                 [_vm._v(_vm._s(op.EmployeeName))]
                               )
                             })
@@ -61062,8 +61135,33 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container-fluid" }, [
-    _c("div", { staticClass: "row mt-5" }, [
+    _c("div", { staticClass: "row mt-2" }, [
       _c("div", { staticClass: "col-md-12" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.employee_query,
+              expression: "employee_query"
+            }
+          ],
+          staticClass: "form-control mb-2",
+          attrs: { type: "text", placeholder: "search employee..." },
+          domProps: { value: _vm.employee_query },
+          on: {
+            keyup: function($event) {
+              return _vm.findEmployee()
+            },
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.employee_query = $event.target.value
+            }
+          }
+        }),
+        _vm._v(" "),
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-header" }, [
             _vm.type == "allocated"
@@ -61545,7 +61643,7 @@ var staticRenderFns = [
     return _c("div", { staticClass: "pt-2" }, [
       _c("img", {
         staticClass: "d-none",
-        staticStyle: { "max-height": "150px" },
+        staticStyle: { "max-height": "100px" },
         attrs: { id: "blah", src: "#", alt: "your image" }
       })
     ])
@@ -61573,8 +61671,33 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container-fluid" }, [
-    _c("div", { staticClass: "row mt-5" }, [
+    _c("div", { staticClass: "row mt-2" }, [
       _c("div", { staticClass: "col-md-12" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.history_query,
+              expression: "history_query"
+            }
+          ],
+          staticClass: "form-control mb-2",
+          attrs: { type: "text", placeholder: "search history..." },
+          domProps: { value: _vm.history_query },
+          on: {
+            keyup: function($event) {
+              return _vm.findHistory()
+            },
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.history_query = $event.target.value
+            }
+          }
+        }),
+        _vm._v(" "),
         _c("div", { staticClass: "card" }, [
           _vm._m(0),
           _vm._v(" "),
@@ -61666,8 +61789,33 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container-fluid" }, [
-    _c("div", { staticClass: "row mt-5" }, [
+    _c("div", { staticClass: "row mt-2" }, [
       _c("div", { staticClass: "col-md-12" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.supplier_query,
+              expression: "supplier_query"
+            }
+          ],
+          staticClass: "form-control mb-2",
+          attrs: { type: "text", placeholder: "search supplier..." },
+          domProps: { value: _vm.supplier_query },
+          on: {
+            keyup: function($event) {
+              return _vm.findSupplier()
+            },
+            input: function($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.supplier_query = $event.target.value
+            }
+          }
+        }),
+        _vm._v(" "),
         _c("div", { staticClass: "card" }, [
           _c("div", { staticClass: "card-header" }, [
             _c("h3", { staticClass: "card-title" }, [_vm._v("Suppliers")]),
@@ -77750,13 +77898,12 @@ var app = new Vue({
     search: '',
     currentUser: {}
   },
-  methods: {
-    // searchit: _.debounce(() => {
+  methods: {// searchit: _.debounce(() => {
     //     Fire.$emit('searching');
     // }, 600)
-    searchit: function searchit() {
-      Fire.$emit('searching');
-    }
+    // searchit: function(){
+    //   Fire.$emit('searching');
+    // }
   },
   created: function created() {
     var _this = this;

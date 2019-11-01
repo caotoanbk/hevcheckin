@@ -1,7 +1,8 @@
 <template>
     <div class="container-fluid">
-<div class="row mt-5">
+<div class="row mt-2">
           <div class="col-md-12">
+            <input type="text" v-model="supplier_query" class="form-control mb-2" placeholder="search supplier..." @keyup="findSupplier()">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Suppliers</h3>
@@ -110,6 +111,7 @@
                     SupplierInfo: '',
                     SupplierCardRange: ''
                 }),
+                supplier_query: ''
             }
         },
         methods: {
@@ -174,6 +176,15 @@
                     }
                 })
             },
+            findSupplier() {
+                axios.get('api/findSupplier?q=' + this.supplier_query)
+                .then((data) => {
+                    this.suppliers = data.data
+                })
+                .catch(() => {
+
+                })
+            },
             loadSuppliers() {
                 axios.get("api/supplier").then(({data}) => (this.suppliers = data));
             },
@@ -195,16 +206,16 @@
             }
         },
         created() {
-            Fire.$on('searching', () => {
-                let query = this.$parent.search;
-                axios.get('api/findSupplier?q=' + query)
-                .then((data) => {
-                    this.suppliers = data.data
-                })
-                .catch(() => {
+            // Fire.$on('searching', () => {
+            //     let query = this.$parent.search;
+            //     axios.get('api/findSupplier?q=' + query)
+            //     .then((data) => {
+            //         this.suppliers = data.data
+            //     })
+            //     .catch(() => {
 
-                })
-            })
+            //     })
+            // })
             this.loadSuppliers();
             Fire.$on('AfterCreate', () => {
                 this.loadSuppliers();

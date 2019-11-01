@@ -1,7 +1,8 @@
 <template>
     <div class="container-fluid">
-<div class="row mt-5">
+<div class="row mt-2">
           <div class="col-md-12">
+            <input type="text" v-model="employee_query" class="form-control mb-2" placeholder="search employee..." @keyup="findEmployee()">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title" v-if="type == 'allocated'">Allocated Employee <span class="badge badge-success p-2">{{employees.total}}</span></h3>
@@ -99,7 +100,7 @@
             <has-error :form="form" field="EmployeePhoto"></has-error>
         </div>
         <div class="pt-2">
-            <img class="d-none" id="blah" src="#" alt="your image" style="max-height: 150px;" />
+            <img class="d-none" id="blah" src="#" alt="your image" style="max-height: 100px;" />
         </div>
       </div>
       <div class="modal-footer">
@@ -131,6 +132,7 @@
                     EmployeePhoto: '',
                     user_id: this.$parent.currentUser.id
                 }),
+                employee_query: '',
                 card_options: {},
             }
         },
@@ -240,6 +242,15 @@
                     }
                 })
             },
+            findEmployee() {
+              axios.get('api/findEmployee?type='+this.type+'&q=' + this.employee_query)
+                .then((data) => {
+                    this.employees = data.data
+                })
+                .catch(() => {
+
+                })
+            },
             loadEmployees() {
                 axios.get("api/employee?type="+this.type).then(({data}) => (this.employees = data));
             },
@@ -261,16 +272,16 @@
             }
         },
         created() {
-            Fire.$on('searching', () => {
-                let query = this.$parent.search;
-                axios.get('api/findEmployee?type='+this.type+'&q=' + query)
-                .then((data) => {
-                    this.employees = data.data
-                })
-                .catch(() => {
+            // Fire.$on('searching', () => {
+            //     let query = this.$parent.search;
+            //     axios.get('api/findEmployee?type='+this.type+'&q=' + query)
+            //     .then((data) => {
+            //         this.employees = data.data
+            //     })
+            //     .catch(() => {
 
-                })
-            })
+            //     })
+            // })
             this.loadEmployees();
             Fire.$on('AfterCreate', () => {
                 this.loadEmployees();

@@ -1,7 +1,8 @@
 <template>
     <div class="container-fluid">
-<div class="row mt-5">
+<div class="row mt-2">
           <div class="col-md-12">
+            <input type="text" v-model="history_query" class="form-control mb-2" placeholder="search history..." @keyup="findHistory()">
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">History</h3>
@@ -46,6 +47,7 @@
         data() {
             return {
                 histories: {},
+                history_query: ''
             }
         },
         methods: {
@@ -55,21 +57,30 @@
                       this.histories = response.data;
                   });
             },
+            findHistory() {
+                axios.get('api/findHistory?q=' + this.history_query)
+                .then((data) => {
+                    this.histories = data.data
+                })
+                .catch(() => {
+
+                })
+            },
             loadHistories() {
                 axios.get("api/history").then(({data}) => (this.histories = data));
             }
         },
         created() {
-            Fire.$on('searching', () => {
-                let query = this.$parent.search;
-                axios.get('api/findHistory?q=' + query)
-                .then((data) => {
-                    this.users = data.data
-                })
-                .catch(() => {
+            // Fire.$on('searching', () => {
+            //     let query = this.$parent.search;
+            //     axios.get('api/findHistory?q=' + query)
+            //     .then((data) => {
+            //         this.users = data.data
+            //     })
+            //     .catch(() => {
 
-                })
-            })
+            //     })
+            // })
             this.loadHistories();
             Fire.$on('AfterCreate', () => {
                 this.loadHistories();

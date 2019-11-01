@@ -15,7 +15,6 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th>ID</th>
                       <th>Supplier Name</th>
                       <th>Supplier Info</th>
                       <th>Card Range</th>
@@ -25,7 +24,6 @@
                   </thead>
                   <tbody>
                     <tr v-for="supplier in suppliers.data" :key="supplier.id">
-                      <td>{{supplier.id}}</td>
                       <td>{{supplier.SupplierName}}</td>
                       <td>{{supplier.SupplierInfo}}</td>
                       <td>{{supplier.SupplierCardRange}}</td>

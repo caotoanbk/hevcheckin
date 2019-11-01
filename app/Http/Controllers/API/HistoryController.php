@@ -15,7 +15,7 @@ class HistoryController extends Controller
      */
     public function index()
     {
-        return History::orderBy('CardName', 'desc')->paginate(15);
+        return History::orderBy('CardName', 'desc')->paginate(10);
     }
 
     /**

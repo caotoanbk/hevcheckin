@@ -25,7 +25,7 @@
                 <p>Cards</p>
               </div>
               <div class="icon">
-                <i class="fas fa-user"></i>
+                <i class="fas fa-id-card"></i>
               </div>
               <a href="/card" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>
@@ -41,7 +41,7 @@
                 <p>Employees</p>
               </div>
               <div class="icon">
-                <i class="fas fa-id-card"></i>
+                <i class="fas fa-users"></i>
               </div>
               <a href="/employee" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
             </div>

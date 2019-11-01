@@ -29,7 +29,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </ul>
     <!-- SEARCH FORM -->
   <div class="input-group input-group-sm">
-    <input v-model="search" class="form-control form-control-navbar" type="search" placeholder="Search" @keyup="searchit">
+    <input v-model="search" class="form-control form-control-navbar" type="search" placeholder="Search" @keyup.enter="searchit">
     <div class="input-group-append">
       <button class="btn btn-navbar" @click.prevent="searchit">
         <i class="fas fa-search"></i>

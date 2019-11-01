@@ -28,7 +28,7 @@ class SupplierController extends Controller
     {
         $this->validate($request,[
             'SupplierName' => 'required|string|max:191',
-            'SupplierInfo' => 'required|string',
+            // 'SupplierInfo' => 'required|string',
             'SupplierCardRange' => 'required|string|max:20',
         ]);
         return Supplier::create([
@@ -62,7 +62,7 @@ class SupplierController extends Controller
 
         $this->validate($request,[
             'SupplierName' => 'required|string|max:191',
-            'SupplierInfo' => 'required|string',
+            // 'SupplierInfo' => 'required|string',
             'SupplierCardRange' => 'required|string|max:20',
         ]);
 

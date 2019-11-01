@@ -16,7 +16,6 @@ class CreateHistoriesTable extends Migration
         Schema::create('histories', function (Blueprint $table) {
             $table->increments('id');
             $table->string('CardName', 50);
-            $table->string('EmployeeIdentity', 50);
             $table->string('EmployeeName', 50);
             $table->string('SupplierName', 50)->nullable();
             $table->timestamps();

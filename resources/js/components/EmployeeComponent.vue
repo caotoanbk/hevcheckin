@@ -18,25 +18,21 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Employee Name</th>
-                      <th>Employee Identity</th>
-                      <th>Employee Type</th>
-                      <th>Employee Cardname</th>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Cardnumber</th>
                       <th>Registered At</th>
-                      <th>Employee Picture</th>
+                      <th>Picture</th>
                       <th>Modify</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="employee in employees.data" :key="employee.id">
-                      <td>{{employee.id}}</td>
                       <td>{{employee.EmployeeName}}</td>
-                      <td>{{employee.EmployeeIdentity}}</td>
                       <td>{{employee.EmployeeType}}</td>
                       <td>{{employee.EmployeeCardname}}</td>
                       <td>{{employee.created_at | myDate}}</td>
-                      <td><img class="img" v-bind:src="'/img/profile/' + employee.EmployeePhoto" style="max-height: 60px;"></td>
+                      <td><img class="img" v-bind:src="'/img/profile/' + employee.EmployeePhoto" style="max-height: 30px;"></td>
                       <td>
                           <a href="#" @click="editModal(employee)">
                               <i class="fa fa-edit blue"></i>
@@ -80,11 +76,6 @@
           <input v-model="form.EmployeeName" type="text" name="EmployeeName"
             class="form-control" placeholder="Name" :class="{ 'is-invalid': form.errors.has('EmployeeName') }">
           <has-error :form="form" field="EmployeeName"></has-error>
-        </div>
-         <div class="form-group">
-          <input v-model="form.EmployeeIdentity" type="text"
-            class="form-control" :readonly="editmode ? true : false" placeholder="CMND/ID" :class="{ 'is-invalid': form.errors.has('EmployeeIdentity') }">
-          <has-error :form="form" field="EmployeeIdentity"></has-error>
         </div>
         <div class="form-group">
             <select name="EmployeeType" v-model="form.EmployeeType" id="type" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeType') }">
@@ -136,7 +127,6 @@
                     id:'',
                     EmployeeName: '',
                     EmployeeType: '',
-                    EmployeeIdentity: '',
                     EmployeeCardname: '',
                     EmployeePhoto: '',
                     user_id: this.$parent.currentUser.id

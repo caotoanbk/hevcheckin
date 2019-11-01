@@ -14,9 +14,9 @@ class CreateCardsTable extends Migration
     public function up()
     {
         Schema::create('cards', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('CardName', 50)->unique();
-            $table->string('EmployeeIdentity', 50)->nullable();
+            $table->string('CardName', 50)->primary();
+            $table->integer('employee_id')->nullable();
+            // $table->foreign('employee_id')->references('id')->on('employees')->onUpdate('cascade')->onDelete('set null');
             $table->timestamps();
         });
     }

@@ -57,24 +57,23 @@ class EmployeeController extends Controller
 
         $this->validate($request,[
             'EmployeeName' => 'required|string|max:191',
-            'EmployeeIdentity' => 'required|string|max:191|unique:employees',
-            'user_id' => 'required',
             // 'EmployeeCardname' => 'sometimes|string|min:6|unique:employees',
-            'EmployeePhoto' => 'required'
+            // 'EmployeePhoto' => 'required'
         ]);
         if($request->EmployeePhoto){
             $name = time().'.'.explode('/', explode(':', substr($request->EmployeePhoto, 0, strpos($request->EmployeePhoto, ';')))[1])[1];
 
             \Image::make($request->EmployeePhoto)->save(public_path('img/profile/').$name);
             $request->merge(['EmployeePhoto' => $name]);
+        } else{
+            $request->merge(['EmployeePhoto' => 'employee.png']);
         }
 
 
         $newEmployee = Employee::create([
             'EmployeeName' => $request['EmployeeName'],
-            'user_id' => $request['user_id'],
+            'user_id' => auth()->id(),
             'EmployeeType' => $request['EmployeeType'],
-            'EmployeeIdentity' => $request['EmployeeIdentity'],
             'EmployeeCardname' => $request['EmployeeCardname'],
             'EmployeePhoto' => $request['EmployeePhoto'],
         ]);
@@ -82,11 +81,10 @@ class EmployeeController extends Controller
         if($request['EmployeeCardname']){
             $card = Card::where('CardName', $request['EmployeeCardname'])->first();
             if($card){                
-                $card->EmployeeIdentity = $newEmployee->EmployeeIdentity;
+                $card->employee_id = $newEmployee->id;
 
                 History::create([
                     'CardName' => $request['EmployeeCardname'],
-                    'EmployeeIdentity' => $request['EmployeeIdentity'],
                     'EmployeeName' => $request['EmployeeName'],
                     'SupplierName' => $supplierName
                 ]);
@@ -128,9 +126,7 @@ class EmployeeController extends Controller
 
         $this->validate($request,[
             'EmployeeName' => 'required|string|max:191',
-            'EmployeeIdentity' => 'sometimes|string|max:191|unique:employees,EmployeeIdentity,'.$employee->id,
             'EmployeeType' => 'required',
-            'EmployeePhoto' => 'required'
         ]);
 
         $currentPhoto = $employee->EmployeePhoto;
@@ -142,7 +138,7 @@ class EmployeeController extends Controller
 
             $employeePhoto = public_path('img/profile/').$currentPhoto;
 
-            if(file_exists($employeePhoto)){
+            if(file_exists($employeePhoto) && $currentPhoto !='employee.png'){
                 @unlink($employeePhoto);
             }
         }
@@ -151,18 +147,17 @@ class EmployeeController extends Controller
 
             $oldCard = Card::where('CardName', $employee->EmployeeCardname)->first();
             if($oldCard){
-               $oldCard->EmployeeIdentity = null;
+               $oldCard->employee_id = null;
                $oldCard->save();
             }
 
             $newCard = Card::where('CardName', $request['EmployeeCardname'])->first();
             if($newCard){
-                $newCard->EmployeeIdentity = $employee->EmployeeIdentity;
+                $newCard->employee_id = $employee->id;
                 $newCard->save();
 
                 History::create([
                     'CardName' => $request['EmployeeCardname'],
-                    'EmployeeIdentity' => $request['EmployeeIdentity'],
                     'EmployeeName' => $employee->EmployeeName,
                     'SupplierName' => $supplierName
                 ]);
@@ -188,7 +183,7 @@ class EmployeeController extends Controller
 
         if($employee->EmployeeCardname){
             $card = Card::where('CardName', $employee->EmployeeCardname)->first();
-            $card->EmployeeIdentity = null;
+            $card->employee_id = null;
             $card->save();
         }
 
@@ -222,7 +217,7 @@ class EmployeeController extends Controller
                 $cards = $cards->where('CardName', '>=', $minCard)->where('CardName', '<=', $maxCard);
             }
         }
-        return $cards->whereNull('EmployeeIdentity')->orderBy('created_at', 'desc')->get();
+        return $cards->whereNull('employee_id')->orderBy('created_at', 'desc')->get();
     }
 
 
@@ -230,7 +225,7 @@ class EmployeeController extends Controller
 
         $employee = Employee::findOrFail($id);
 
-        $cards = Card::where('EmployeeIdentity', null);
+        $cards = Card::where('employee_id', null);
 
         $supplierId = auth()->user()->supplier_id;
 
@@ -267,12 +262,11 @@ class EmployeeController extends Controller
         if ($search = \Request::get('q')) {
             $employees = $employees->where(function($query) use ($search){
                 $query->where('EmployeeName', 'LIKE', "%$search%");
-                $query->orWhere('EmployeeIdentity', 'LIKE', "%$search%");
             });
         }else{
             $employees = $employees->orderBy('created_at', 'desc');
         }
-        return $employees->with('card')->paginate(15);
+        return $employees->with('card')->paginate(10);
     }
 
     public function getSuppliers()

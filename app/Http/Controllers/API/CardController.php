@@ -120,13 +120,13 @@ class CardController extends Controller
 
         if($card && ($card->employee_id != $request->employee_id)){
 
-            $oldEmpl = Employee::where('employee_id', $card->employee_id)->first();
+            $oldEmpl = Employee::where('id', $card->employee_id)->first();
             if($oldEmpl){
                $oldEmpl->EmployeeCardname = null;
                $oldEmpl->save();
             }
 
-            $newEmpl = Employee::where('employee_id', $request['employee_id'])->first();
+            $newEmpl = Employee::where('id', $request['employee_id'])->first();
             if($newEmpl){
                 $newEmpl->EmployeeCardname = $card->CardName;
                 $newEmpl->save();

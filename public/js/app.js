@@ -2004,7 +2004,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this4.$Progress.finish();
 
-        Fire.$emit('AfterCreate');
+        Fire.$emit('AfterCreateCard');
       })["catch"](function () {
         _this4.$Progress.fail();
       });
@@ -2037,7 +2037,7 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           _this5.form["delete"]('api/card/' + id).then(function () {
             swal.fire('Deleted!', 'Your file has been deleted.', 'success');
-            Fire.$emit('AfterCreate');
+            Fire.$emit('AfterCreateCard');
           })["catch"](function () {
             swal("Failed!", "There was something wrong.", "warning");
           });
@@ -2065,7 +2065,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$Progress.start();
       this.form.post('api/card').then(function () {
-        Fire.$emit('AfterCreate');
+        Fire.$emit('AfterCreateCard');
         $('#addNewModal').modal('hide');
         toast.fire({
           type: 'success',
@@ -2089,7 +2089,7 @@ __webpack_require__.r(__webpack_exports__);
     //     })
     // })
     this.loadCards();
-    Fire.$on('AfterCreate', function () {
+    Fire.$on('AfterCreateCard', function () {
       _this9.loadCards();
     });
   },
@@ -2397,7 +2397,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this5.$Progress.finish();
 
-        Fire.$emit('AfterCreate');
+        Fire.$emit('AfterCreateEmployee');
       })["catch"](function () {
         _this5.$Progress.fail();
       });
@@ -2437,7 +2437,7 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           _this6.form["delete"]('api/employee/' + id).then(function () {
             swal.fire('Deleted!', 'Your file has been deleted.', 'success');
-            Fire.$emit('AfterCreate');
+            Fire.$emit('AfterCreateEmployee');
           })["catch"](function () {
             swal("Failed!", "There was something wrong.", "warning");
           });
@@ -2464,7 +2464,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$Progress.start();
       this.form.post('api/employee').then(function () {
-        Fire.$emit('AfterCreate');
+        Fire.$emit('AfterCreateEmployee');
         $('#addNewModal').modal('hide');
         toast.fire({
           type: 'success',
@@ -2488,7 +2488,7 @@ __webpack_require__.r(__webpack_exports__);
     //     })
     // })
     this.loadEmployees();
-    Fire.$on('AfterCreate', function () {
+    Fire.$on('AfterCreateEmployee', function () {
       _this10.loadEmployees();
     }); // setInterval(() => this.loadUsers(), 3000);
   },
@@ -2751,7 +2751,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.$Progress.finish();
 
-        Fire.$emit('AfterCreate');
+        Fire.$emit('AfterCreateSupplier');
       })["catch"](function () {
         _this2.$Progress.fail();
       });
@@ -2782,7 +2782,7 @@ __webpack_require__.r(__webpack_exports__);
         if (result.value) {
           _this3.form["delete"]('api/supplier/' + id).then(function () {
             swal.fire('Deleted!', 'Your file has been deleted.', 'success');
-            Fire.$emit('AfterCreate');
+            Fire.$emit('AfterCreateSupplier');
           })["catch"](function () {
             swal("Failed!", "There was something wrong.", "warning");
           });
@@ -2809,7 +2809,7 @@ __webpack_require__.r(__webpack_exports__);
 
       this.$Progress.start();
       this.form.post('api/supplier').then(function () {
-        Fire.$emit('AfterCreate');
+        Fire.$emit('AfterCreateSupplier');
         $('#addNewModal').modal('hide');
         toast.fire({
           type: 'success',
@@ -2833,7 +2833,7 @@ __webpack_require__.r(__webpack_exports__);
     //     })
     // })
     this.loadSuppliers();
-    Fire.$on('AfterCreate', function () {
+    Fire.$on('AfterCreateSupplier', function () {
       _this7.loadSuppliers();
     }); // setInterval(() => this.loadUsers(), 3000);
   }

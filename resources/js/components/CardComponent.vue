@@ -145,7 +145,7 @@
                       'success'
                     )
                     this.$Progress.finish();
-                    Fire.$emit('AfterCreate');
+                    Fire.$emit('AfterCreateCard');
                 })
                 .catch(() => {
                     this.$Progress.fail();
@@ -183,7 +183,7 @@
                               'Your file has been deleted.',
                               'success'
                             )
-                            Fire.$emit('AfterCreate');
+                            Fire.$emit('AfterCreateCard');
                       }).catch( () => {
                         swal("Failed!", "There was something wrong.", "warning");
                       })
@@ -207,7 +207,7 @@
                 this.$Progress.start();
                 this.form.post('api/card')
                     .then(() => {
-                        Fire.$emit('AfterCreate');
+                        Fire.$emit('AfterCreateCard');
                         $('#addNewModal').modal('hide');
                         toast.fire({
                           type: 'success',
@@ -232,7 +232,7 @@
             //     })
             // })
             this.loadCards();
-            Fire.$on('AfterCreate', () => {
+            Fire.$on('AfterCreateCard', () => {
                 this.loadCards();
             });
         },

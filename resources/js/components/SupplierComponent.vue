@@ -133,7 +133,7 @@
                       'success'
                     )
                     this.$Progress.finish();
-                    Fire.$emit('AfterCreate');
+                    Fire.$emit('AfterCreateSupplier');
                 })
                 .catch(() => {
                     this.$Progress.fail();
@@ -169,7 +169,7 @@
                               'Your file has been deleted.',
                               'success'
                             )
-                            Fire.$emit('AfterCreate');
+                            Fire.$emit('AfterCreateSupplier');
                       }).catch( () => {
                         swal("Failed!", "There was something wrong.", "warning");
                       })
@@ -192,7 +192,7 @@
                 this.$Progress.start();
                 this.form.post('api/supplier')
                     .then(() => {
-                        Fire.$emit('AfterCreate');
+                        Fire.$emit('AfterCreateSupplier');
                         $('#addNewModal').modal('hide');
                         toast.fire({
                           type: 'success',
@@ -217,7 +217,7 @@
             //     })
             // })
             this.loadSuppliers();
-            Fire.$on('AfterCreate', () => {
+            Fire.$on('AfterCreateSupplier', () => {
                 this.loadSuppliers();
             });
             // setInterval(() => this.loadUsers(), 3000);

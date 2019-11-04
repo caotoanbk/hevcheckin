@@ -190,7 +190,7 @@
                       'success'
                     )
                     this.$Progress.finish();
-                    Fire.$emit('AfterCreate');
+                    Fire.$emit('AfterCreateEmployee');
                 })
                 .catch(() => {
                     this.$Progress.fail();
@@ -235,7 +235,7 @@
                               'Your file has been deleted.',
                               'success'
                             )
-                            Fire.$emit('AfterCreate');
+                            Fire.$emit('AfterCreateEmployee');
                       }).catch( () => {
                         swal("Failed!", "There was something wrong.", "warning");
                       })
@@ -258,7 +258,7 @@
                 this.$Progress.start();
                 this.form.post('api/employee')
                     .then(() => {
-                        Fire.$emit('AfterCreate');
+                        Fire.$emit('AfterCreateEmployee');
                         $('#addNewModal').modal('hide');
                         toast.fire({
                           type: 'success',
@@ -283,7 +283,7 @@
             //     })
             // })
             this.loadEmployees();
-            Fire.$on('AfterCreate', () => {
+            Fire.$on('AfterCreateEmployee', () => {
                 this.loadEmployees();
             });
             // setInterval(() => this.loadUsers(), 3000);

@@ -10,7 +10,7 @@
             <h3 class="card-title" v-else>All Card <span class="badge badge-primary p-2">{{cards.total}}</span></h3>
 
             <div class="card-tools">
-                <button class="btn btn-success btn-sm" @click="newModal" v-show="this.$parent.currentUser.supplier_id === null">Add New Card</button>
+                <button class="btn btn-success btn-sm" @click="newModal" v-show="this.$parent.currentUser.SupplierName === null">Add New Card</button>
             </div>
           </div>
           <!-- /.card-header -->
@@ -18,17 +18,23 @@
             <table class="table table-hover">
               <thead>
                 <tr>
+                  <th>Date</th>
                   <th>Card Name</th>
-                  <th>Employee</th>
-                  <th>Registered At</th>
+                  <th>Ecode</th>
+                  <th>Ename</th>
+                  <th>Action</th>
+                  <th>Công ty</th>
                   <th>Modify</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="card in cards.data" :key="card.CardName">
-                  <td>{{card.CardName}}</td>
-                  <td>{{card.employee_name}}</td>
                   <td>{{card.created_at | myDate}}</td>
+                  <td>{{card.CardName}}</td>
+                  <td>{{card.employee?card.employee.EmployeeCode:''}}</td>
+                  <td>{{card.employee?card.employee.EmployeeName:''}}</td>
+                  <td>{{card.employee?'Đang sử dụng':'Spare'}}</td>
+                  <td>{{card.employee?card.employee.SupplierName:''}}</td>
                   <td>
                       <a href="#" @click="editModal(card)">
                           <i class="fa fa-edit blue"></i>
@@ -75,11 +81,12 @@
             </div>
 
             <div class="form-group">
-                <select name="employee_id" v-model="form.employee_id" id="employee_id" class="form-control" :class="{'is-invalid': form.errors.has('employee_id') }">
-                    <option value="">Select Employee</option>
-                    <option v-for="op in employee_options" :value="op.id">{{op.EmployeeName}}</option>
+                <select name="EmployeeCode" v-model="form.EmployeeCode" id="EmployeeCode" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeCode') }">
+                    <option value="" v-if="editmode">Trả thẻ</option>
+                    <option value="" v-else>Select employee</option>
+                    <option v-for="op in employee_options" :value="op.EmployeeCode">{{op.EmployeeName}}</option>
                 </select>
-                <has-error :form="form" field="employee_id"></has-error>
+                <has-error :form="form" field="EmployeeCode"></has-error>
             </div>
 
           </div>
@@ -106,7 +113,7 @@
                 cards: {},
                 form: new Form({
                     CardName: '',
-                    employee_id: ''
+                    EmployeeCode: ''
                 }),
                 card_query: '',
                 employee_options: {},

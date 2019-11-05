@@ -68,7 +68,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
-        <li class="nav-item" v-show="currentUser.supplier_id === null">
+        <li class="nav-item" v-show="currentUser.SupplierName === null">
             <router-link to="/dashboard" class="nav-link">
               <i class="nav-icon fas fa-home blue"></i>
               <p>
@@ -77,7 +77,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </router-link>
           </li>
 
-          <li class="nav-item" v-show="currentUser.supplier_id === null">
+          <li class="nav-item" v-show="currentUser.SupplierName === null">
             <router-link to="/supplier" class="nav-link">
               <i class="nav-icon fas fa-star yellow"></i>
               <p>

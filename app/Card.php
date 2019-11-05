@@ -10,7 +10,7 @@ class Card extends Model
 
     public $incrementing = false;
 
-    protected $fillable = ['CardName', 'employee_id'];
+    protected $fillable = ['CardName', 'EmployeeCode'];
 
     protected $appends = ['employee_name'];
 
@@ -22,5 +22,10 @@ class Card extends Model
         if($this->employee == null)
             return null;
         return $this->employee->EmployeeName;
+    }
+
+    public function getSupplierNameAttribute()
+    {
+        $user_id = $this->employee->SupplierName;
     }
 }

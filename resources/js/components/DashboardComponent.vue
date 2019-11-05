@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" v-show="this.$parent.currentUser.SupplierName === null">
         <div class="row pt-5 d-flex justify-content-center" >
           <div class="col-lg-3 col-6">
             <!-- small box -->

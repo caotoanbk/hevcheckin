@@ -16,19 +16,19 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
-                      <th>Supplier Name</th>
-                      <th>Supplier Info</th>
+                      <th>Date</th>
+                      <th>Name</th>
+                      <th>Info</th>
                       <th>Card Range</th>
-                      <th>Registered At</th>
                       <th>Modify</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="supplier in suppliers.data" :key="supplier.id">
+                      <td>{{supplier.created_at | myDate}}</td>
                       <td>{{supplier.SupplierName}}</td>
                       <td>{{supplier.SupplierInfo}}</td>
                       <td>{{supplier.SupplierCardRange}}</td>
-                      <td>{{supplier.created_at | myDate}}</td>
                       <td>
                           <a href="#" @click="editModal(supplier)">
                               <i class="fa fa-edit blue"></i>

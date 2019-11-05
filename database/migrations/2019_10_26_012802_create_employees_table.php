@@ -14,15 +14,15 @@ class CreateEmployeesTable extends Migration
     public function up()
     {
         Schema::create('employees', function (Blueprint $table) {
-            $table->increments('id');
+            $table->string('EmployeeCode')->primary();
             $table->string('EmployeeName');
             // $table->string('EmployeeIdentity',50)->unique();
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')
-                  ->references('id')
-                  ->on('users')
-                  ->onUpdate('cascade')
-                  ->onDelete('cascade');
+            $table->string('SupplierName')->nullable();
+            // $table->foreign('SupplierName')
+            //       ->references('SupplierName')
+            //       ->on('suppliers')
+            //       ->onUpdate('cascade')
+            //       ->onDelete('cascade');
             $table->string('EmployeePhoto')->default('employee.png');
             $table->string('EmployeeType', 50)->default('Temporary Worker');
             $table->string('EmployeeCardname', 50)->nullable();

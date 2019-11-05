@@ -15,7 +15,7 @@ class CreateCardsTable extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->string('CardName', 50)->primary();
-            $table->integer('employee_id')->nullable();
+            $table->string('EmployeeCode')->nullable();
             // $table->foreign('employee_id')->references('id')->on('employees')->onUpdate('cascade')->onDelete('set null');
             $table->timestamps();
         });

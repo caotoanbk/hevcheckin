@@ -1954,6 +1954,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['type'],
   data: function data() {
@@ -1962,7 +1969,7 @@ __webpack_require__.r(__webpack_exports__);
       cards: {},
       form: new Form({
         CardName: '',
-        employee_id: ''
+        EmployeeCode: ''
       }),
       card_query: '',
       employee_options: {}
@@ -2323,6 +2330,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['type'],
   data: function data() {
@@ -2332,6 +2349,7 @@ __webpack_require__.r(__webpack_exports__);
       form: new Form({
         id: '',
         EmployeeName: '',
+        EmployeeCode: '',
         EmployeeType: '',
         EmployeeCardname: '',
         EmployeePhoto: '',
@@ -2390,7 +2408,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       this.$Progress.start();
-      this.form.put('api/employee/' + this.form.id).then(function () {
+      this.form.put('api/employee/' + this.form.EmployeeCode).then(function () {
         //success
         $('#addNewModal').modal('hide');
         swal.fire('Updated!', 'Information has been updated.', 'success');
@@ -2405,7 +2423,7 @@ __webpack_require__.r(__webpack_exports__);
     editModal: function editModal(employee) {
       this.editmode = true;
       this.form.reset();
-      this.getCardOptionsEdit(employee.id);
+      this.getCardOptionsEdit(employee.EmployeeCode);
       $('input[type=file]').val('');
       $('#blah').addClass('d-none');
       $('#addNewModal').modal('show');
@@ -2510,6 +2528,12 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -60634,9 +60658,9 @@ var render = function() {
                     {
                       name: "show",
                       rawName: "v-show",
-                      value: this.$parent.currentUser.supplier_id === null,
+                      value: this.$parent.currentUser.SupplierName === null,
                       expression:
-                        "this.$parent.currentUser.supplier_id === null"
+                        "this.$parent.currentUser.SupplierName === null"
                     }
                   ],
                   staticClass: "btn btn-success btn-sm",
@@ -60655,12 +60679,32 @@ var render = function() {
                 "tbody",
                 _vm._l(_vm.cards.data, function(card) {
                   return _c("tr", { key: card.CardName }, [
-                    _c("td", [_vm._v(_vm._s(card.CardName))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(card.employee_name))]),
-                    _vm._v(" "),
                     _c("td", [
                       _vm._v(_vm._s(_vm._f("myDate")(card.created_at)))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(card.CardName))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(card.employee ? card.employee.EmployeeCode : "")
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(card.employee ? card.employee.EmployeeName : "")
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(card.employee ? "Đang sử dụng" : "Spare"))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(card.employee ? card.employee.SupplierName : "")
+                      )
                     ]),
                     _vm._v(" "),
                     _c("td", [
@@ -60840,15 +60884,15 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.form.employee_id,
-                                expression: "form.employee_id"
+                                value: _vm.form.EmployeeCode,
+                                expression: "form.EmployeeCode"
                               }
                             ],
                             staticClass: "form-control",
                             class: {
-                              "is-invalid": _vm.form.errors.has("employee_id")
+                              "is-invalid": _vm.form.errors.has("EmployeeCode")
                             },
-                            attrs: { name: "employee_id", id: "employee_id" },
+                            attrs: { name: "EmployeeCode", id: "EmployeeCode" },
                             on: {
                               change: function($event) {
                                 var $$selectedVal = Array.prototype.filter
@@ -60861,7 +60905,7 @@ var render = function() {
                                   })
                                 _vm.$set(
                                   _vm.form,
-                                  "employee_id",
+                                  "EmployeeCode",
                                   $event.target.multiple
                                     ? $$selectedVal
                                     : $$selectedVal[0]
@@ -60870,14 +60914,18 @@ var render = function() {
                             }
                           },
                           [
-                            _c("option", { attrs: { value: "" } }, [
-                              _vm._v("Select Employee")
-                            ]),
+                            _vm.editmode
+                              ? _c("option", { attrs: { value: "" } }, [
+                                  _vm._v("Trả thẻ")
+                                ])
+                              : _c("option", { attrs: { value: "" } }, [
+                                  _vm._v("Select employee")
+                                ]),
                             _vm._v(" "),
                             _vm._l(_vm.employee_options, function(op) {
                               return _c(
                                 "option",
-                                { domProps: { value: op.id } },
+                                { domProps: { value: op.EmployeeCode } },
                                 [_vm._v(_vm._s(op.EmployeeName))]
                               )
                             })
@@ -60886,7 +60934,7 @@ var render = function() {
                         ),
                         _vm._v(" "),
                         _c("has-error", {
-                          attrs: { form: _vm.form, field: "employee_id" }
+                          attrs: { form: _vm.form, field: "EmployeeCode" }
                         })
                       ],
                       1
@@ -60953,11 +61001,17 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Card Name")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Employee")]),
+        _c("th", [_vm._v("Ecode")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Registered At")]),
+        _c("th", [_vm._v("Ename")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Action")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Công ty")]),
         _vm._v(" "),
         _c("th", [_vm._v("Modify")])
       ])
@@ -61002,51 +61056,65 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "container" }, [
-    _c("div", { staticClass: "row pt-5 d-flex justify-content-center" }, [
-      _c("div", { staticClass: "col-lg-3 col-6" }, [
-        _c("div", { staticClass: "small-box bg-warning" }, [
-          _c("div", { staticClass: "inner" }, [
-            _c("h3", [_vm._v(_vm._s(_vm.totalSuppliers))]),
+  return _c(
+    "div",
+    {
+      directives: [
+        {
+          name: "show",
+          rawName: "v-show",
+          value: this.$parent.currentUser.SupplierName === null,
+          expression: "this.$parent.currentUser.SupplierName === null"
+        }
+      ],
+      staticClass: "container"
+    },
+    [
+      _c("div", { staticClass: "row pt-5 d-flex justify-content-center" }, [
+        _c("div", { staticClass: "col-lg-3 col-6" }, [
+          _c("div", { staticClass: "small-box bg-warning" }, [
+            _c("div", { staticClass: "inner" }, [
+              _c("h3", [_vm._v(_vm._s(_vm.totalSuppliers))]),
+              _vm._v(" "),
+              _c("p", [_vm._v("Suppliers")])
+            ]),
             _vm._v(" "),
-            _c("p", [_vm._v("Suppliers")])
-          ]),
-          _vm._v(" "),
-          _vm._m(0),
-          _vm._v(" "),
-          _vm._m(1)
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-lg-3 col-6" }, [
-        _c("div", { staticClass: "small-box bg-info" }, [
-          _c("div", { staticClass: "inner" }, [
-            _c("h3", [_vm._v(_vm._s(_vm.totalCards))]),
+            _vm._m(0),
             _vm._v(" "),
-            _c("p", [_vm._v("Cards")])
-          ]),
-          _vm._v(" "),
-          _vm._m(2),
-          _vm._v(" "),
-          _vm._m(3)
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-lg-3 col-6" }, [
-        _c("div", { staticClass: "small-box bg-success" }, [
-          _c("div", { staticClass: "inner" }, [
-            _c("h3", [_vm._v(_vm._s(_vm.totalEmployees))]),
+            _vm._m(1)
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-lg-3 col-6" }, [
+          _c("div", { staticClass: "small-box bg-info" }, [
+            _c("div", { staticClass: "inner" }, [
+              _c("h3", [_vm._v(_vm._s(_vm.totalCards))]),
+              _vm._v(" "),
+              _c("p", [_vm._v("Cards")])
+            ]),
             _vm._v(" "),
-            _c("p", [_vm._v("Employees")])
-          ]),
-          _vm._v(" "),
-          _vm._m(4),
-          _vm._v(" "),
-          _vm._m(5)
+            _vm._m(2),
+            _vm._v(" "),
+            _vm._m(3)
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-lg-3 col-6" }, [
+          _c("div", { staticClass: "small-box bg-success" }, [
+            _c("div", { staticClass: "inner" }, [
+              _c("h3", [_vm._v(_vm._s(_vm.totalEmployees))]),
+              _vm._v(" "),
+              _c("p", [_vm._v("Employees")])
+            ]),
+            _vm._v(" "),
+            _vm._m(4),
+            _vm._v(" "),
+            _vm._m(5)
+          ])
         ])
       ])
-    ])
-  ])
+    ]
+  )
 }
 var staticRenderFns = [
   function() {
@@ -61204,16 +61272,20 @@ var render = function() {
               _c(
                 "tbody",
                 _vm._l(_vm.employees.data, function(employee) {
-                  return _c("tr", { key: employee.id }, [
+                  return _c("tr", { key: employee.EmployeeCode }, [
+                    _c("td", [
+                      _vm._v(_vm._s(_vm._f("myDate")(employee.created_at)))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(employee.EmployeeCode))]),
+                    _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(employee.EmployeeName))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(employee.SupplierName))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(employee.EmployeeType))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(employee.EmployeeCardname))]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _vm._v(_vm._s(_vm._f("myDate")(employee.created_at)))
-                    ]),
                     _vm._v(" "),
                     _c("td", [
                       _c("img", {
@@ -61245,7 +61317,7 @@ var render = function() {
                           attrs: { href: "#" },
                           on: {
                             click: function($event) {
-                              return _vm.deleteEmployee(employee.id)
+                              return _vm.deleteEmployee(employee.EmployeeCode)
                             }
                           }
                         },
@@ -61392,6 +61464,51 @@ var render = function() {
                       "div",
                       { staticClass: "form-group" },
                       [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.EmployeeCode,
+                              expression: "form.EmployeeCode"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          class: {
+                            "is-invalid": _vm.form.errors.has("EmployeeCode")
+                          },
+                          attrs: {
+                            type: "text",
+                            name: "EmployeeCode",
+                            readonly: _vm.editmode,
+                            placeholder: "Code"
+                          },
+                          domProps: { value: _vm.form.EmployeeCode },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.form,
+                                "EmployeeCode",
+                                $event.target.value
+                              )
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("has-error", {
+                          attrs: { form: _vm.form, field: "EmployeeCode" }
+                        })
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "form-group" },
+                      [
                         _c(
                           "select",
                           {
@@ -61496,9 +61613,13 @@ var render = function() {
                             }
                           },
                           [
-                            _c("option", { attrs: { value: "" } }, [
-                              _vm._v("Select Card")
-                            ]),
+                            _vm.editmode
+                              ? _c("option", { attrs: { value: "" } }, [
+                                  _vm._v("Trả thẻ")
+                                ])
+                              : _c("option", { attrs: { value: "" } }, [
+                                  _vm._v("Select card")
+                                ]),
                             _vm._v(" "),
                             _vm._l(_vm.card_options, function(op) {
                               return _c(
@@ -61605,13 +61726,17 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Code")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Company")]),
         _vm._v(" "),
         _c("th", [_vm._v("Type")]),
         _vm._v(" "),
         _c("th", [_vm._v("Cardnumber")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Registered At")]),
         _vm._v(" "),
         _c("th", [_vm._v("Picture")]),
         _vm._v(" "),
@@ -61709,15 +61834,21 @@ var render = function() {
                 "tbody",
                 _vm._l(_vm.histories.data, function(history) {
                   return _c("tr", { key: history.id }, [
+                    _c("td", [
+                      _vm._v(_vm._s(_vm._f("myDate")(history.created_at)))
+                    ]),
+                    _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(history.CardName))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(history.EmployeeCode))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(history.EmployeeName))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(history.SupplierName))]),
+                    _c("td", [_vm._v(_vm._s(history.action))]),
                     _vm._v(" "),
-                    _c("td", [
-                      _vm._v(_vm._s(_vm._f("myDate")(history.created_at)))
-                    ])
+                    _c("td", [_vm._v(_vm._s(history.comment))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(history.SupplierName))])
                   ])
                 }),
                 0
@@ -61756,13 +61887,19 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("Date")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Card Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Ecode")]),
         _vm._v(" "),
         _c("th", [_vm._v("Employee Name")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Supplier Name")]),
+        _c("th", [_vm._v("Action")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Registered At")])
+        _c("th", [_vm._v("Ghi chú")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Công ty")])
       ])
     ])
   }
@@ -61843,15 +61980,15 @@ var render = function() {
                 "tbody",
                 _vm._l(_vm.suppliers.data, function(supplier) {
                   return _c("tr", { key: supplier.id }, [
+                    _c("td", [
+                      _vm._v(_vm._s(_vm._f("myDate")(supplier.created_at)))
+                    ]),
+                    _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(supplier.SupplierName))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(supplier.SupplierInfo))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(supplier.SupplierCardRange))]),
-                    _vm._v(" "),
-                    _c("td", [
-                      _vm._v(_vm._s(_vm._f("myDate")(supplier.created_at)))
-                    ]),
                     _vm._v(" "),
                     _c("td", [
                       _c(
@@ -62169,13 +62306,13 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", [_vm._v("Supplier Name")]),
+        _c("th", [_vm._v("Date")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Supplier Info")]),
+        _c("th", [_vm._v("Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Info")]),
         _vm._v(" "),
         _c("th", [_vm._v("Card Range")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Registered At")]),
         _vm._v(" "),
         _c("th", [_vm._v("Modify")])
       ])

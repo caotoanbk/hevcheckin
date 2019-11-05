@@ -7,6 +7,6 @@ use App\Employee;
 
 class History extends Model
 {
-    protected $fillable = ['CardName' ,'EmployeeName', 'SupplierName'];
+    protected $fillable = ['CardName', 'EmployeeCode', 'EmployeeName', 'SupplierName', 'action', 'comment'];
 
 }

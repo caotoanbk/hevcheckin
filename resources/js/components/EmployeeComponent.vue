@@ -19,27 +19,31 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
+                      <th>Date</th>
+                      <th>Code</th>
                       <th>Name</th>
+                      <th>Company</th>
                       <th>Type</th>
                       <th>Cardnumber</th>
-                      <th>Registered At</th>
                       <th>Picture</th>
                       <th>Modify</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="employee in employees.data" :key="employee.id">
+                    <tr v-for="employee in employees.data" :key="employee.EmployeeCode">
+                      <td>{{employee.created_at | myDate}}</td>
+                      <td>{{employee.EmployeeCode}}</td>
                       <td>{{employee.EmployeeName}}</td>
+                      <td>{{employee.SupplierName}}</td>
                       <td>{{employee.EmployeeType}}</td>
                       <td>{{employee.EmployeeCardname}}</td>
-                      <td>{{employee.created_at | myDate}}</td>
                       <td><img class="img" v-bind:src="'/img/profile/' + employee.EmployeePhoto" style="max-height: 30px;"></td>
                       <td>
                           <a href="#" @click="editModal(employee)">
                               <i class="fa fa-edit blue"></i>
                           </a>
                           /
-                          <a href="#" @click="deleteEmployee(employee.id)">
+                          <a href="#" @click="deleteEmployee(employee.EmployeeCode)">
                               <i class="fa fa-trash red"></i>
                           </a>
 
@@ -79,6 +83,11 @@
           <has-error :form="form" field="EmployeeName"></has-error>
         </div>
         <div class="form-group">
+          <input v-model="form.EmployeeCode" type="text" name="EmployeeCode"
+            class="form-control" :readonly="editmode" placeholder="Code" :class="{ 'is-invalid': form.errors.has('EmployeeCode') }">
+          <has-error :form="form" field="EmployeeCode"></has-error>
+        </div>
+        <div class="form-group">
             <select name="EmployeeType" v-model="form.EmployeeType" id="type" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeType') }">
                 <option value="Công nhân thời vụ">Công nhân thời vụ</option>
                 <option value="Công nhân chính thức">Công nhân chính thức</option>
@@ -88,7 +97,8 @@
 
         <div class="form-group">
             <select name="EmployeeCardname" v-model="form.EmployeeCardname" id="EmployeeCardname" class="form-control" :class="{'is-invalid': form.errors.has('EmployeeCardname') }">
-                <option value="">Select Card</option>
+                <option value="" v-if="editmode">Trả thẻ</option>
+                <option value="" v-else>Select card</option>
                 <option v-for="op in card_options" :value="op.CardName">{{op.CardName}}</option>
             </select>
             <has-error :form="form" field="EmployeeCardname"></has-error>
@@ -127,6 +137,7 @@
                 form: new Form({
                     id:'',
                     EmployeeName: '',
+                    EmployeeCode: '',
                     EmployeeType: '',
                     EmployeeCardname: '',
                     EmployeePhoto: '',
@@ -180,7 +191,7 @@
             },
             updateEmployee() {
                 this.$Progress.start();
-                this.form.put('api/employee/'+this.form.id)
+                this.form.put('api/employee/'+this.form.EmployeeCode)
                 .then(() => {
                     //success
                     $('#addNewModal').modal('hide');
@@ -199,7 +210,7 @@
             editModal(employee){
                 this.editmode = true;
                 this.form.reset();
-                this.getCardOptionsEdit(employee.id);
+                this.getCardOptionsEdit(employee.EmployeeCode);
                 $('input[type=file]').val('');
                 $('#blah').addClass('d-none');
                 $('#addNewModal').modal('show');

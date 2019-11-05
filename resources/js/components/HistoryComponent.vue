@@ -12,18 +12,24 @@
                 <table class="table table-hover">
                   <thead>
                     <tr>
+                      <th>Date</th>
                       <th>Card Name</th>
+                      <th>Ecode</th>
                       <th>Employee Name</th>
-                      <th>Supplier Name</th>
-                      <th>Registered At</th>
+                      <th>Action</th>
+                      <th>Ghi chú</th>
+                      <th>Công ty</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="history in histories.data" :key="history.id">
-                      <td>{{history.CardName}}</td>
-                      <td>{{history.EmployeeName}}</td>
-                      <td>{{history.SupplierName}}</td>
                       <td>{{history.created_at | myDate}}</td>
+                      <td>{{history.CardName}}</td>
+                      <td>{{history.EmployeeCode}}</td>
+                      <td>{{history.EmployeeName}}</td>
+                      <td>{{history.action}}</td>
+                      <td>{{history.comment}}</td>
+                      <td>{{history.SupplierName}}</td>
                     </tr>
                   </tbody>
                 </table>

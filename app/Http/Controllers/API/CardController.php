@@ -22,26 +22,26 @@ class CardController extends Controller
         $type = $request->get('type');
         $cards = Card::select();
 
-        $supplierId = auth()->user()->supplier_id;
+        $supplierName = auth()->user()->SupplierName;
 
 
-        if($supplierId){
-            $supplier = Supplier::find($supplierId);
+        if($supplierName){
+            $supplier = Supplier::find($supplierName);
             if($supplier){
                 $cardRange = $supplier->SupplierCardRange;
 
                 $minCard = explode(',', $cardRange)[0];
                 $maxCard = explode(',', $cardRange)[1];
 
-                $cards = $cards->where('CardName', '>=', $minCard)->where('CardName', '<=', $maxCard);
+                $cards = $cards->where('CardName', '>=', 'Temporary worker '.$minCard)->where('CardName', '<=', 'Temporary worker '.$maxCard);
             }
         }
         if($type == 'allocated'){
-            return $cards->whereNotNull('employee_id')->orderBy('created_at', 'desc')->paginate(10);
+            return $cards->whereNotNull('EmployeeCode')->orderBy('EmployeeCode', 'desc')->paginate(10);
         }
 
         if($type == 'avaiable'){
-            return $cards->whereNull('employee_id')->orderBy('created_at', 'desc')->paginate(10);
+            return $cards->whereNull('EmployeeCode')->orderBy('created_at', 'desc')->paginate(10);
         }
 
         return $cards->orderBy('created_at', 'desc')->paginate(10);
@@ -55,26 +55,24 @@ class CardController extends Controller
      */
     public function store(Request $request)
     {
-        if(auth()->user()->supplier_id){
-            $supplierName = Supplier::find(auth()->user()->supplier_id)->SupplierName;
-        } else {
-            $supplierName = '';
-        }
+        $supplierName = auth()->user()->SupplierName;
 
 
         $this->validate($request,[
             'CardName' => 'required|string|max:191|unique:cards',
         ]);
 
-        if($request['employee_id']){
-            $employee = Employee::where('employee_id', $request['employee_id'])->first();
+        if($request['EmployeeCode']){
+            $employee = Employee::where('EmployeeCode', $request['EmployeeCode'])->first();
             if($employee){                
                 $employee->EmployeeCardname = $request['CardName'];
 
                 History::create([
                     'CardName' => $request['CardName'],
                     'EmployeeName' => $employee->EmployeeName,
-                    'SupplierName' => $supplierName
+                    'SupplierName' => $supplierName,
+                    'EmployeeCode' => $request['Employeecode'],
+                    'action' => 'Đang sử dụng'
                 ]);
                 $employee->save();
             }
@@ -82,7 +80,7 @@ class CardController extends Controller
 
         return Card::create([
             'CardName' => $request['CardName'],
-            'employee_id' => $request['employee_id']
+            'EmployeeCode' => $request['EmployeeCode']
         ]);
     }
 
@@ -106,11 +104,7 @@ class CardController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if(auth()->user()->supplier_id){
-            $supplierName = Supplier::find(auth()->user()->supplier_id)->SupplierName;
-        } else {
-            $supplierName = '';
-        }
+        $supplierName = auth()->user()->SupplierName;
 
         $card = Card::find($id);
 
@@ -118,23 +112,35 @@ class CardController extends Controller
         //     'CardName' => 'required|string|max:191|unique:cards,CardName,'.$card->id,
         // ]);
 
-        if($card && ($card->employee_id != $request->employee_id)){
+        if($card && ($card->EmployeeCode != $request->EmployeeCode)){
 
-            $oldEmpl = Employee::where('id', $card->employee_id)->first();
+            $oldEmpl = Employee::where('EmployeeCode', $card->EmployeeCode)->first();
             if($oldEmpl){
                $oldEmpl->EmployeeCardname = null;
                $oldEmpl->save();
             }
 
-            $newEmpl = Employee::where('id', $request['employee_id'])->first();
+            $newEmpl = Employee::where('EmployeeCode', $request['EmployeeCode'])->first();
             if($newEmpl){
                 $newEmpl->EmployeeCardname = $card->CardName;
                 $newEmpl->save();
                 History::create([
                     'CardName' => $request['CardName'],
                     'EmployeeName' => $newEmpl->EmployeeName,
-                    'SupplierName' => $supplierName
+                    'SupplierName' => $supplierName,
+                    'action' => 'Đang sử dụng',
+                    'EmployeeCode' => $newEmpl->EmployeeCode
                 ]);
+            }else{
+                History::create([
+                    'CardName' => $request['CardName'],
+                    'EmployeeName' => Employee::find($card->EmployeeCode)->EmployeeName,
+                    'SupplierName' => $supplierName,
+                    'EmployeeCode' => $card->EmployeeCode,
+                    'action' => 'Trả thẻ'
+                ]);
+                // $card->EmployeeCode = null;
+                // $card->save();
             }
 
         }
@@ -153,10 +159,12 @@ class CardController extends Controller
     {
         $card = Card::findOrFail($id);
 
-        if($card->employee_id){
-            $employee = Employee::findOrFail($card->employee_id);
-            $employee->EmployeeCardname = null;
-            $employee->save();
+        if($card->EmployeeCode){
+            $employee = Employee::find($card->EmployeeCode);
+            if($employee){            
+                $employee->EmployeeCardname = null;
+                $employee->save();
+            }
         }
 
         // delete the card
@@ -170,9 +178,9 @@ class CardController extends Controller
         $type = \Request::get('type') ? \Request::get('type') : '';
 
         if($type == 'allocated'){
-            $cards = Card::whereNotNull('employee_id');
+            $cards = Card::whereNotNull('EmployeeCode');
         } else if($type == 'avaiable'){
-            $cards = Card::whereNull('employee_id');
+            $cards = Card::whereNull('EmployeeCode');
         } else{
             $cards = Card::select();
         }
@@ -180,6 +188,7 @@ class CardController extends Controller
         if ($search = \Request::get('q')) {
             $cards = $cards->where(function($query) use ($search){
                 $query->where('CardName', 'LIKE', "%$search%");
+                $query->orWhere('EmployeeCode', 'LIKE', "%$search%");
                 // $query->where('CardName', 'LIKE', "%$search%");
             });
         }else{
@@ -201,7 +210,7 @@ class CardController extends Controller
     }
 
     public function getEmployeeOptions(){
-        return Employee::where('EmployeeCardName', null)->where('user_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        return Employee::where('EmployeeCardname', null)->where('SupplierName', 'like', '%'.auth()->user()->SupplierName.'%')->orderBy('created_at', 'desc')->get();
     }
 
     public function getEmployeeOptionsEdit($id){
@@ -210,10 +219,10 @@ class CardController extends Controller
 
         $employees = Employee::where('EmployeeCardName', null);
 
-        if($card->employee_id){
-            $employees = $employees->orWhere('id', $card->employee_id);
+        if($card->EmployeeCode){
+            $employees = $employees->orWhere('EmployeeCode', $card->EmployeeCode);
         }
 
-        return $employees->where('user_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        return $employees->where('SupplierName', 'like','%'.auth()->user()->SupplierName.'%')->orderBy('created_at', 'desc')->get();
     }
 }

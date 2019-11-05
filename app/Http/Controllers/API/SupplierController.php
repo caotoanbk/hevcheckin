@@ -27,12 +27,12 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'SupplierName' => 'required|string|max:191',
+            'SupplierName' => 'required|string|max:191|unique:suppliers',
             // 'SupplierInfo' => 'required|string',
             'SupplierCardRange' => 'required|string|max:20',
         ]);
         return Supplier::create([
-            'SupplierName' => $request['SupplierName'],
+            'SupplierName' => strtoupper($request['SupplierName']),
             'SupplierInfo' => $request['SupplierInfo'],
             'SupplierCardRange' => $request['SupplierCardRange'],
         ]);

@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'type', 'bio', 'photo', 'supplier_id'
+        'name', 'email', 'password', 'type', 'bio', 'photo', 'SupplierName'
     ];
 
     /**
@@ -39,7 +39,7 @@ class User extends Authenticatable
     ];
 
     public function supplier(){
-        return $this->hasOne(\App\Supplier::class, 'id', 'supplier_id');
+        return $this->hasOne(\App\Supplier::class, 'SupplierName', 'SupplierName');
     }
 
 }
